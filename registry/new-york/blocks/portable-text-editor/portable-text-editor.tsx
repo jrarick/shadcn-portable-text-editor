@@ -131,22 +131,16 @@ const editorClassNames = `
   [&_.pt-list-item-number.pt-list-item-level-10]:before:content-[counter(list-level-10)_'.']
 `
 
-const justificationSchema = defineSchema({
-  decorators: [
-    { name: 'left', label: 'Align Left', icon: AlignLeftIcon },
-    { name: 'center', label: 'Align Center', icon: AlignCenterIcon },
-    { name: 'right', label: 'Align Right', icon: AlignRightIcon },
-    { name: 'justify', label: 'Justify', icon: AlignJustifyIcon },
-  ],
-})
-
 const schemaDefinition = defineSchema({
   decorators: [
     { name: 'strong', label: 'Bold', icon: BoldIcon },
     { name: 'em', label: 'Italic', icon: ItalicIcon },
     { name: 'underline', label: 'Underline', icon: UnderlineIcon },
     { name: 'strikethrough', label: 'Strikethrough', icon: StrikethroughIcon },
-    ...justificationSchema.decorators,
+    { name: 'left', label: 'Align Left', icon: AlignLeftIcon },
+    { name: 'center', label: 'Align Center', icon: AlignCenterIcon },
+    { name: 'right', label: 'Align Right', icon: AlignRightIcon },
+    { name: 'justify', label: 'Justify', icon: AlignJustifyIcon },
   ],
   styles: [
     { name: 'normal', label: 'Paragraph', icon: PilcrowIcon },
@@ -334,6 +328,7 @@ function ButtonGroup({ className, ...props }: ComponentProps<'div'>) {
         '[&_button]:shadow-none shadow-xs',
         'isolate [&_button]:focus:z-10',
         '[&_button]:rounded-none [&_button]:first:rounded-l-md [&_button]:last:rounded-r-md',
+        '[&_button]:border',
         className
       )}
       {...props}
@@ -510,36 +505,30 @@ const ToolbarButton = ({
 
   const active = activeDecorator || activeList || activeAnnotation
 
-  if (showTooltip) {
-    return (
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            value={name}
-            variant={active ? 'default' : (variant ?? 'outline')}
-            onClick={onClick}
-            disabled={disabled}
-            className="size-6"
-            ref={ref}
-          >
-            <Icon className="size-3.5" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>{label}</TooltipContent>
-      </Tooltip>
-    )
-  }
-  return (
+  const button = (
     <Button
       value={name}
       variant={active ? 'default' : (variant ?? 'outline')}
       onClick={onClick}
+      disabled={disabled}
       className="size-6"
+      aria-label={showTooltip ? label : undefined}
       ref={ref}
     >
-      <Icon />
+      <Icon className="size-3.5" />
     </Button>
   )
+
+  if (showTooltip) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>{button}</TooltipTrigger>
+        <TooltipContent>{label}</TooltipContent>
+      </Tooltip>
+    )
+  }
+
+  return button
 }
 
 // const UndoButton = ({
