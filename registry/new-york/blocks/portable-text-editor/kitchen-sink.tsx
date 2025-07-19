@@ -34,102 +34,71 @@ import {
   TextQuoteIcon,
   UnderlineIcon,
 } from 'lucide-react'
-import { cn } from '@/lib/utils'
 import {
   ButtonGroup,
   LinkButton,
+  RedoButton,
   StyleDropdown,
   Toolbar,
   ToolbarButton,
+  UndoButton,
 } from '@/registry/new-york/ui/portable-text-editor'
-
-const editorClassNames = `
-  [counter-reset:list-level-1_list-level-2_list-level-3_list-level-4_list-level-5_list-level-6_list-level-7_list-level-8_list-level-9_list-level-10]
-  not-[&>.pt-list-item-number]:[counter-set:list-level-1_list-level-2_list-level-3_list-level-4_list-level-5_list-level-6_list-level-7_list-level-8_list-level-9_list-level-10]
-  
-  [&_.pt-list-item]:relative
-  [&_.pt-list-item]:before:absolute
-  [&_.pt-list-item-bullet]:before:content-['•']
-  [&_.pt-list-item-nubmer]:before:content-[counter(list-level-1)_'.']
-
-  [&_.pt-list-item-level-1]:pl-4
-  [&_.pt-list-item-level-1]:[counter-increment:list-level-1]
-  [&_.pt-list-item-level-1]:before:left-0
-
-  [&_.pt-list-item-level-2]:pl-6
-  [&_.pt-list-item-level-2]:[counter-increment:list-level-2]
-  [&_.pt-list-item-level-2]:before:left-2
-  [&_.pt-list-item-number.pt-list-item-level-2]:before:content-[counter(list-level-2)_'.']
-  [&_.pt-list-item-bullet.pt-list-item-level-2]:before:content-['◦']
-
-  [&_.pt-list-item-level-3]:pl-8
-  [&_.pt-list-item-level-3]:[counter-increment:list-level-3]
-  [&_.pt-list-item-level-3]:before:left-4
-  [&_.pt-list-item-number.pt-list-item-level-3]:before:content-[counter(list-level-3)_'.']
-  [&_.pt-list-item-bullet.pt-list-item-level-3]:before:content-['⬝']
-
-  [&_.pt-list-item-level-4]:pl-10
-  [&_.pt-list-item-level-4]:[counter-increment:list-level-4]
-  [&_.pt-list-item-level-4]:before:left-6
-  [&_.pt-list-item-number.pt-list-item-level-4]:before:content-[counter(list-level-4)_'.']
-
-  [&_.pt-list-item-level-5]:pl-12
-  [&_.pt-list-item-level-5]:[counter-increment:list-level-5]
-  [&_.pt-list-item-level-5]:before:left-7.5
-  [&_.pt-list-item-number.pt-list-item-level-5]:before:content-[counter(list-level-5)_'.']
-  [&_.pt-list-item-bullet.pt-list-item-level-5]:before:content-['◦']
-
-  [&_.pt-list-item-level-6]:pl-14
-  [&_.pt-list-item-level-6]:[counter-increment:list-level-6]
-  [&_.pt-list-item-level-6]:before:left-9
-  [&_.pt-list-item-number.pt-list-item-level-6]:before:content-[counter(list-level-6)_'.']
-  [&_.pt-list-item-bullet.pt-list-item-level-6]:before:content-['⬝']
-
-  [&_.pt-list-item-level-7]:pl-16
-  [&_.pt-list-item-level-7]:[counter-increment:list-level-7]
-  [&_.pt-list-item-level-7]:before:left-11
-  [&_.pt-list-item-number.pt-list-item-level-7]:before:content-[counter(list-level-7)_'.']
-
-  [&_.pt-list-item-level-8]:pl-18
-  [&_.pt-list-item-level-8]:[counter-increment:list-level-8]
-  [&_.pt-list-item-level-8]:before:left-13
-  [&_.pt-list-item-number.pt-list-item-level-8]:before:content-[counter(list-level-8)_'.']
-  [&_.pt-list-item-bullet.pt-list-item-level-8]:before:content-['◦']
-
-  [&_.pt-list-item-level-9]:pl-20
-  [&_.pt-list-item-level-9]:[counter-increment:list-level-9]
-  [&_.pt-list-item-level-9]:before:left-15
-  [&_.pt-list-item-number.pt-list-item-level-9]:before:content-[counter(list-level-9)_'.']
-  [&_.pt-list-item-bullet.pt-list-item-level-9]:before:content-['⬝']
-
-  [&_.pt-list-item-level-10]:pl-22
-  [&_.pt-list-item-level-10]:[counter-increment:list-level-10]
-  [&_.pt-list-item-level-10]:before:left-17
-  [&_.pt-list-item-number.pt-list-item-level-10]:before:content-[counter(list-level-10)_'.']
-`
+import './editor.css'
+import {
+  blockquote,
+  bold,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  italic,
+  link,
+  normal,
+  strikeThrough,
+  underline,
+} from '@portabletext/keyboard-shortcuts'
 
 const schemaDefinition = defineSchema({
   decorators: [
-    { name: 'strong', title: 'Bold', icon: BoldIcon },
-    { name: 'em', title: 'Italic', icon: ItalicIcon },
-    { name: 'underline', title: 'Underline', icon: UnderlineIcon },
-    { name: 'strikethrough', title: 'Strikethrough', icon: StrikethroughIcon },
+    { name: 'strong', title: 'Bold', icon: BoldIcon, shortcut: bold },
+    { name: 'em', title: 'Italic', icon: ItalicIcon, shortcut: italic },
+    {
+      name: 'underline',
+      title: 'Underline',
+      icon: UnderlineIcon,
+      shortcut: underline,
+    },
+    {
+      name: 'strikethrough',
+      title: 'Strikethrough',
+      icon: StrikethroughIcon,
+      shortcut: strikeThrough,
+    },
     { name: 'left', title: 'Align Left', icon: AlignLeftIcon },
     { name: 'center', title: 'Align Center', icon: AlignCenterIcon },
     { name: 'right', title: 'Align Right', icon: AlignRightIcon },
     { name: 'justify', title: 'Justify', icon: AlignJustifyIcon },
   ],
   styles: [
-    { name: 'normal', title: 'Paragraph', icon: PilcrowIcon },
-    { name: 'h1', title: 'Heading 1', icon: Heading1Icon },
-    { name: 'h2', title: 'Heading 2', icon: Heading2Icon },
-    { name: 'h3', title: 'Heading 3', icon: Heading3Icon },
-    { name: 'h4', title: 'Heading 4', icon: Heading4Icon },
-    { name: 'h5', title: 'Heading 5', icon: Heading5Icon },
-    { name: 'h6', title: 'Heading 6', icon: Heading6Icon },
-    { name: 'blockquote', title: 'Blockquote', icon: TextQuoteIcon },
+    { name: 'normal', title: 'Paragraph', icon: PilcrowIcon, shortcut: normal },
+    { name: 'h1', title: 'Heading 1', icon: Heading1Icon, shortcut: h1 },
+    { name: 'h2', title: 'Heading 2', icon: Heading2Icon, shortcut: h2 },
+    { name: 'h3', title: 'Heading 3', icon: Heading3Icon, shortcut: h3 },
+    { name: 'h4', title: 'Heading 4', icon: Heading4Icon, shortcut: h4 },
+    { name: 'h5', title: 'Heading 5', icon: Heading5Icon, shortcut: h5 },
+    { name: 'h6', title: 'Heading 6', icon: Heading6Icon, shortcut: h6 },
+    {
+      name: 'blockquote',
+      title: 'Blockquote',
+      icon: TextQuoteIcon,
+      shortcut: blockquote,
+    },
   ],
-  annotations: [{ name: 'link', title: 'Link', icon: Link2Icon }],
+  annotations: [
+    { name: 'link', title: 'Link', icon: Link2Icon, shortcut: link },
+  ],
   lists: [
     { name: 'bullet', title: 'Bullet List', icon: ListIcon },
     { name: 'number', title: 'Numbered List', icon: ListOrderedIcon },
@@ -219,7 +188,7 @@ const renderDecorator: RenderDecoratorFunction = (props) => {
   return <>{props.children}</>
 }
 
-const PortableTextEditor = () => {
+const KitchenSinkEditor = () => {
   const [value, setValue] = useState<Array<PortableTextBlock> | undefined>(
     undefined
   )
@@ -241,10 +210,7 @@ const PortableTextEditor = () => {
       <div className="flex flex-col border border-border rounded-md shadow">
         <PortableTextToolbar />
         <PortableTextEditable
-          className={cn(
-            'w-full h-[350px] focus-visible:outline-none p-2 text-sm',
-            editorClassNames
-          )}
+          className="w-full h-96 focus-visible:outline-none p-2"
           renderStyle={renderStyle}
           renderDecorator={renderDecorator}
           renderBlock={(props) => <div>{props.children}</div>}
@@ -268,6 +234,10 @@ const PortableTextToolbar = () => {
 
   return (
     <Toolbar>
+      <ButtonGroup>
+        <UndoButton />
+        <RedoButton />
+      </ButtonGroup>
       <ButtonGroup>
         {standardDecorators.map((decorator) => (
           <ToolbarButton
@@ -331,4 +301,4 @@ const PortableTextToolbar = () => {
   )
 }
 
-export default PortableTextEditor
+export default KitchenSinkEditor

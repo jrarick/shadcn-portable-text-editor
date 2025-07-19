@@ -4,7 +4,7 @@ import { HelloWorld } from '@/registry/new-york/blocks/hello-world/hello-world'
 import { ExampleForm } from '@/registry/new-york/blocks/example-form/example-form'
 import PokemonPage from '@/registry/new-york/blocks/complex-component/page'
 import { ExampleCard } from '@/registry/new-york/blocks/example-with-css/example-card'
-import PortableTextEditor from '@/registry/new-york/blocks/portable-text-editor/portable-text-editor'
+import KitchenSinkEditor from '@/registry/new-york/blocks/portable-text-editor/kitchen-sink'
 // This page displays items from the custom registry.
 // You are free to implement this with your own design as needed.
 
@@ -26,7 +26,7 @@ export default function Home() {
             <OpenInV0Button name="portable-text-editor" className="w-fit" />
           </div>
           <div className="flex items-center justify-center min-h-[400px] relative">
-            <PortableTextEditor />
+            <KitchenSinkEditor />
           </div>
         </div>
 

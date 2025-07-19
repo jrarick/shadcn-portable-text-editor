@@ -12,82 +12,51 @@ import {
   SelectValue,
 } from '@/registry/new-york/ui/select'
 import { cn } from '@/lib/utils'
-import { VariantProps } from 'class-variance-authority'
-import { Button, buttonVariants } from './button'
+import { Button } from './button'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from '@/registry/new-york/ui/tooltip'
-import { useState } from 'react'
+import { CSSProperties, useState } from 'react'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from '@/registry/new-york/ui/popover'
 import { Input } from '@/registry/new-york/ui/input'
-import { RedoIcon, UndoIcon } from 'lucide-react'
+import {
+  ArrowBigUpIcon,
+  ChevronUpIcon,
+  OptionIcon,
+  RedoIcon,
+  UndoIcon,
+} from 'lucide-react'
+import { KeyboardShortcut, undo, redo } from '@portabletext/keyboard-shortcuts'
 
 export interface ExtendedBaseDefinition extends BaseDefinition {
   icon?: React.ElementType
-}
-
-export type ExtendedEditorSchema = {
-  annotations: ReadonlyArray<
-    ExtendedBaseDefinition & {
-      fields: ReadonlyArray<{
-        name: string
-        type: string
-      }>
-    }
-  >
-  block: {
-    name: string
-  }
-  blockObjects: ReadonlyArray<
-    ExtendedBaseDefinition & {
-      fields: ReadonlyArray<{
-        name: string
-        type: string
-      }>
-    }
-  >
-  decorators: ReadonlyArray<
-    ExtendedBaseDefinition & {
-      value: string
-    }
-  >
-  inlineObjects: ReadonlyArray<
-    ExtendedBaseDefinition & {
-      fields: ReadonlyArray<{
-        name: string
-        type: string
-      }>
-    }
-  >
-  span: {
-    name: string
-  }
-  styles: ReadonlyArray<
-    ExtendedBaseDefinition & {
-      value: string
-    }
-  >
-  lists: ReadonlyArray<
-    ExtendedBaseDefinition & {
-      value: string
-    }
+  shortcut?: KeyboardShortcut<
+    Pick<
+      KeyboardEvent,
+      'code' | 'key' | 'altKey' | 'ctrlKey' | 'metaKey' | 'shiftKey'
+    >
   >
 }
 
 export const StyleDropdown = ({
   styles,
+  showKeyboardShortcut = true,
+  width = 'auto',
 }: {
   styles: ReadonlyArray<ExtendedBaseDefinition>
+  showKeyboardShortcut?: boolean
+  width?: CSSProperties['width']
 }) => {
   const editor = useEditor()
-  const activeStyle = useEditorSelector(editor, selectors.getActiveStyle)
+  const activeStyle =
+    useEditorSelector(editor, selectors.getActiveStyle) ?? styles[0].name
 
   return (
     <Select
@@ -100,16 +69,22 @@ export const StyleDropdown = ({
       }}
       value={activeStyle}
     >
-      <SelectTrigger className="bg-background">
+      <SelectTrigger className="bg-background" style={{ width }}>
         <SelectValue placeholder="Select a style" />
       </SelectTrigger>
       <SelectContent>
         {styles.map((style) => {
-          const Icon = style.icon
           return (
             <SelectItem key={style.name} value={style.name}>
-              {Icon && <Icon />}
-              <span>{style.title}</span>
+              <div className="flex flex-row items-center gap-4">
+                <div className="flex items-center gap-2">
+                  {style.icon && <style.icon />}
+                  <span>{style.title}</span>
+                </div>
+                {showKeyboardShortcut && style.shortcut && (
+                  <KeyboardShortcutPreview shortcut={style.shortcut} />
+                )}
+              </div>
             </SelectItem>
           )
         })}
@@ -140,21 +115,16 @@ export const ButtonGroup = ({
 export const ToolbarButton = ({
   definition,
   showTooltip = true,
-  onClick,
-  disabled,
-  variant = 'outline',
-  size = 'icon',
+  showKeyboardShortcut = true,
   ref,
+  ...props
 }: {
   definition: ExtendedBaseDefinition
   showTooltip?: boolean
-  onClick?: React.MouseEventHandler<HTMLButtonElement>
-  disabled?: boolean
-  variant?: VariantProps<typeof buttonVariants>['variant']
-  size?: VariantProps<typeof buttonVariants>['size']
+  showKeyboardShortcut?: boolean
   ref?: React.Ref<HTMLButtonElement>
-}) => {
-  const { name, icon, title } = definition
+} & React.ComponentPropsWithoutRef<typeof Button>) => {
+  const { name, icon, title, shortcut } = definition
   const Icon = icon
   const editor = useEditor()
 
@@ -173,12 +143,11 @@ export const ToolbarButton = ({
   const button = (
     <Button
       value={name}
-      variant={active ? 'default' : (variant ?? 'outline')}
-      size={size}
-      onClick={onClick}
-      disabled={disabled}
+      variant={active ? 'default' : (props.variant ?? 'outline')}
+      size={props.size ?? 'icon'}
       aria-label={showTooltip ? title : undefined}
       ref={ref}
+      {...props}
     >
       {Icon && <Icon />}
     </Button>
@@ -188,12 +157,58 @@ export const ToolbarButton = ({
     return (
       <Tooltip>
         <TooltipTrigger asChild>{button}</TooltipTrigger>
-        <TooltipContent>{title}</TooltipContent>
+        <TooltipContent>
+          <div className="flex space-x-2">
+            <span>{title}</span>
+            {showKeyboardShortcut && !!shortcut && (
+              <KeyboardShortcutPreview shortcut={shortcut} />
+            )}
+          </div>
+        </TooltipContent>
       </Tooltip>
     )
   }
 
   return button
+}
+
+export const KeyboardShortcutPreview = ({
+  shortcut,
+}: {
+  shortcut: KeyboardShortcut
+}) => {
+  const keyToIcon = {
+    shift: ArrowBigUpIcon,
+    ctrl: ChevronUpIcon,
+    option: OptionIcon,
+  }
+
+  const KeyboardKey = ({ keyboardKey }: { keyboardKey: string }) => {
+    const Icon = keyToIcon[keyboardKey.toLowerCase() as keyof typeof keyToIcon]
+
+    return (
+      <kbd className="rounded-xs bg-muted text-muted-foreground h-4 min-w-4 flex items-center justify-center text-xs">
+        {Icon ? <Icon className="size-3" /> : keyboardKey}
+      </kbd>
+    )
+  }
+
+  return (
+    <div className="space-x-1 flex items-center z-10">
+      {shortcut.keys.map((keyboardKey) => (
+        <kbd
+          key={keyboardKey}
+          className="rounded-xs bg-muted text-muted-foreground h-4 min-w-4 flex items-center justify-center text-xs"
+        >
+          {keyboardKey.toLowerCase() in keyToIcon ? (
+            <KeyboardKey keyboardKey={keyboardKey} />
+          ) : (
+            keyboardKey
+          )}
+        </kbd>
+      ))}
+    </div>
+  )
 }
 
 export const LinkButton = ({
@@ -254,21 +269,16 @@ export const LinkButton = ({
   )
 }
 
-export const UndoButton = ({
-  showTooltip = true,
-  ...props
-}: {
-  showTooltip?: boolean
-} & React.ComponentProps<typeof Button>) => {
+export const UndoButton = (props: React.ComponentProps<typeof Button>) => {
   const editor = useEditor()
 
   return (
     <ToolbarButton
-      showTooltip={showTooltip}
       definition={{
         name: 'undo',
         icon: UndoIcon,
         title: 'Undo',
+        shortcut: undo,
       }}
       onClick={() => {
         editor.send({ type: 'history.undo' })
@@ -279,21 +289,16 @@ export const UndoButton = ({
   )
 }
 
-export const RedoButton = ({
-  showTooltip = true,
-  ...props
-}: {
-  showTooltip?: boolean
-} & React.ComponentProps<typeof Button>) => {
+export const RedoButton = (props: React.ComponentProps<typeof Button>) => {
   const editor = useEditor()
 
   return (
     <ToolbarButton
-      showTooltip={showTooltip}
       definition={{
         name: 'redo',
         icon: RedoIcon,
         title: 'Redo',
+        shortcut: redo,
       }}
       onClick={() => {
         editor.send({ type: 'history.redo' })
@@ -307,7 +312,7 @@ export const RedoButton = ({
 export const Toolbar = ({ children }: { children?: React.ReactNode }) => {
   return (
     <TooltipProvider>
-      <div className="border-b py-1.5 px-2 flex gap-1 bg-muted rounded-t-sm">
+      <div className="border-b py-1.5 px-2.5 flex gap-1.5 bg-muted rounded-t-sm flex-wrap">
         {children}
       </div>
     </TooltipProvider>
