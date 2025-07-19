@@ -5,37 +5,14 @@ import {
   EditorProvider,
   PortableTextEditable,
   useEditor,
-  useEditorSelector,
 } from '@portabletext/editor'
-import * as selectors from '@portabletext/editor/selectors'
 import type {
   PortableTextBlock,
   RenderDecoratorFunction,
   RenderStyleFunction,
 } from '@portabletext/editor'
 import { EventListenerPlugin } from '@portabletext/editor/plugins'
-import {
-  ComponentProps,
-  ElementType,
-  FC,
-  MouseEventHandler,
-  SVGProps,
-  useState,
-} from 'react'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/registry/new-york/ui/tooltip'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/registry/new-york/ui/select'
-import { Button, buttonVariants } from '@/registry/new-york/ui/button'
+import { useState } from 'react'
 import {
   AlignCenterIcon,
   AlignJustifyIcon,
@@ -59,12 +36,12 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/registry/new-york/ui/popover'
-import { Input } from '@/registry/new-york/ui/input'
-import { VariantProps } from 'class-variance-authority'
+  ButtonGroup,
+  LinkButton,
+  StyleDropdown,
+  Toolbar,
+  ToolbarButton,
+} from '@/registry/new-york/ui/portable-text-editor'
 
 const editorClassNames = `
   [counter-reset:list-level-1_list-level-2_list-level-3_list-level-4_list-level-5_list-level-6_list-level-7_list-level-8_list-level-9_list-level-10]
@@ -133,29 +110,29 @@ const editorClassNames = `
 
 const schemaDefinition = defineSchema({
   decorators: [
-    { name: 'strong', label: 'Bold', icon: BoldIcon },
-    { name: 'em', label: 'Italic', icon: ItalicIcon },
-    { name: 'underline', label: 'Underline', icon: UnderlineIcon },
-    { name: 'strikethrough', label: 'Strikethrough', icon: StrikethroughIcon },
-    { name: 'left', label: 'Align Left', icon: AlignLeftIcon },
-    { name: 'center', label: 'Align Center', icon: AlignCenterIcon },
-    { name: 'right', label: 'Align Right', icon: AlignRightIcon },
-    { name: 'justify', label: 'Justify', icon: AlignJustifyIcon },
+    { name: 'strong', title: 'Bold', icon: BoldIcon },
+    { name: 'em', title: 'Italic', icon: ItalicIcon },
+    { name: 'underline', title: 'Underline', icon: UnderlineIcon },
+    { name: 'strikethrough', title: 'Strikethrough', icon: StrikethroughIcon },
+    { name: 'left', title: 'Align Left', icon: AlignLeftIcon },
+    { name: 'center', title: 'Align Center', icon: AlignCenterIcon },
+    { name: 'right', title: 'Align Right', icon: AlignRightIcon },
+    { name: 'justify', title: 'Justify', icon: AlignJustifyIcon },
   ],
   styles: [
-    { name: 'normal', label: 'Paragraph', icon: PilcrowIcon },
-    { name: 'h1', label: 'Heading 1', icon: Heading1Icon },
-    { name: 'h2', label: 'Heading 2', icon: Heading2Icon },
-    { name: 'h3', label: 'Heading 3', icon: Heading3Icon },
-    { name: 'h4', label: 'Heading 4', icon: Heading4Icon },
-    { name: 'h5', label: 'Heading 5', icon: Heading5Icon },
-    { name: 'h6', label: 'Heading 6', icon: Heading6Icon },
-    { name: 'blockquote', label: 'Blockquote', icon: TextQuoteIcon },
+    { name: 'normal', title: 'Paragraph', icon: PilcrowIcon },
+    { name: 'h1', title: 'Heading 1', icon: Heading1Icon },
+    { name: 'h2', title: 'Heading 2', icon: Heading2Icon },
+    { name: 'h3', title: 'Heading 3', icon: Heading3Icon },
+    { name: 'h4', title: 'Heading 4', icon: Heading4Icon },
+    { name: 'h5', title: 'Heading 5', icon: Heading5Icon },
+    { name: 'h6', title: 'Heading 6', icon: Heading6Icon },
+    { name: 'blockquote', title: 'Blockquote', icon: TextQuoteIcon },
   ],
-  annotations: [{ name: 'link', label: 'Link', icon: Link2Icon }],
+  annotations: [{ name: 'link', title: 'Link', icon: Link2Icon }],
   lists: [
-    { name: 'bullet', label: 'Bullet List', icon: ListIcon },
-    { name: 'number', label: 'Numbered List', icon: ListOrderedIcon },
+    { name: 'bullet', title: 'Bullet List', icon: ListIcon },
+    { name: 'number', title: 'Numbered List', icon: ListOrderedIcon },
   ],
   inlineObjects: [],
   blockObjects: [],
@@ -242,101 +219,7 @@ const renderDecorator: RenderDecoratorFunction = (props) => {
   return <>{props.children}</>
 }
 
-function Toolbar() {
-  const editor = useEditor()
-
-  const standardDecorators = schemaDefinition.decorators.filter(
-    (decorator) =>
-      !['left', 'center', 'right', 'justify'].includes(decorator.name)
-  )
-  const alignmentDecorators = schemaDefinition.decorators.filter((decorator) =>
-    ['left', 'center', 'right', 'justify'].includes(decorator.name)
-  )
-
-  return (
-    <TooltipProvider>
-      <div className="border-b py-1.5 px-2 flex gap-1 bg-muted rounded-t-sm">
-        <ButtonGroup>
-          {standardDecorators.map((decorator) => (
-            <ToolbarButton
-              key={decorator.name}
-              definition={decorator}
-              onClick={() => {
-                editor.send({
-                  type: 'decorator.toggle',
-                  decorator: decorator.name,
-                })
-                editor.send({ type: 'focus' })
-              }}
-            />
-          ))}
-        </ButtonGroup>
-        <StyleDropdown />
-        <ButtonGroup>
-          {alignmentDecorators.map((decorator) => (
-            <ToolbarButton
-              key={decorator.name}
-              definition={decorator}
-              onClick={() => {
-                alignmentDecorators
-                  .filter((d) => d.name !== decorator.name)
-                  .forEach((decorator) => {
-                    editor.send({
-                      type: 'decorator.remove',
-                      decorator: decorator.name,
-                    })
-                  })
-                editor.send({
-                  type: 'decorator.toggle',
-                  decorator: decorator.name,
-                })
-                editor.send({ type: 'focus' })
-              }}
-            />
-          ))}
-        </ButtonGroup>
-        <ButtonGroup>
-          {schemaDefinition.lists.map((list) => (
-            <ToolbarButton
-              key={list.name}
-              definition={list}
-              onClick={() => {
-                editor.send({
-                  type: 'list item.toggle',
-                  listItem: list.name,
-                })
-                editor.send({ type: 'focus' })
-              }}
-            />
-          ))}
-        </ButtonGroup>
-        {schemaDefinition.annotations
-          .filter((annotation) => annotation.name === 'link')
-          .map((annotation) => (
-            <LinkButton key={annotation.name} annotation={annotation} />
-          ))}
-      </div>
-    </TooltipProvider>
-  )
-}
-
-function ButtonGroup({ className, ...props }: ComponentProps<'div'>) {
-  return (
-    <div
-      className={cn(
-        'flex flex-row rounded-md -space-x-px',
-        '[&_button]:shadow-none shadow-xs',
-        'isolate [&_button]:focus:z-10',
-        '[&_button]:rounded-none [&_button]:first:rounded-l-md [&_button]:last:rounded-r-md',
-        '[&_button]:border',
-        className
-      )}
-      {...props}
-    />
-  )
-}
-
-function PortableTextEditor() {
+const PortableTextEditor = () => {
   const [value, setValue] = useState<Array<PortableTextBlock> | undefined>(
     undefined
   )
@@ -356,7 +239,7 @@ function PortableTextEditor() {
         }}
       />
       <div className="flex flex-col border border-border rounded-md shadow">
-        <Toolbar />
+        <PortableTextToolbar />
         <PortableTextEditable
           className={cn(
             'w-full h-[350px] focus-visible:outline-none p-2 text-sm',
@@ -372,213 +255,80 @@ function PortableTextEditor() {
   )
 }
 
-const LinkButton = ({
-  annotation,
-}: {
-  annotation: {
-    name: string
-    icon: ElementType | FC<SVGProps<SVGSVGElement>>
-    label: string
-  }
-}) => {
+const PortableTextToolbar = () => {
   const editor = useEditor()
-  const [inputValue, setInputValue] = useState('')
+
+  const standardDecorators = schemaDefinition.decorators.filter(
+    (decorator) =>
+      !['left', 'center', 'right', 'justify'].includes(decorator.name)
+  )
+  const alignmentDecorators = schemaDefinition.decorators.filter((decorator) =>
+    ['left', 'center', 'right', 'justify'].includes(decorator.name)
+  )
 
   return (
-    <Popover key={annotation.name}>
-      <PopoverTrigger asChild>
-        <ToolbarButton
-          key={annotation.name}
-          definition={annotation}
-          onClick={() => {
-            editor.send({
-              type: 'focus',
-            })
-          }}
-        />
-      </PopoverTrigger>
-      <PopoverContent className="max-w-min">
-        <p className="text-xs text-muted-foreground mb-2 font-semibold">
-          Enter a URL
-        </p>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault()
-
-            editor.send({
-              type: 'annotation.add',
-              annotation: {
-                name: annotation.name,
-                value: {
-                  href: inputValue,
-                },
-              },
-            })
-
-            editor.send({ type: 'focus' })
-          }}
-        >
-          <Input
-            className="w-40"
-            value={inputValue}
-            onChange={(e) => {
-              setInputValue(e.target.value)
+    <Toolbar>
+      <ButtonGroup>
+        {standardDecorators.map((decorator) => (
+          <ToolbarButton
+            key={decorator.name}
+            definition={decorator}
+            onClick={() => {
+              editor.send({
+                type: 'decorator.toggle',
+                decorator: decorator.name,
+              })
+              editor.send({ type: 'focus' })
             }}
           />
-          <Button type="submit" className="mt-2 w-full" size="sm">
-            Submit
-          </Button>
-        </form>
-      </PopoverContent>
-    </Popover>
+        ))}
+      </ButtonGroup>
+      <StyleDropdown styles={schemaDefinition.styles} />
+      <ButtonGroup>
+        {alignmentDecorators.map((decorator) => (
+          <ToolbarButton
+            key={decorator.name}
+            definition={decorator}
+            onClick={() => {
+              alignmentDecorators
+                .filter((d) => d.name !== decorator.name)
+                .forEach((decorator) => {
+                  editor.send({
+                    type: 'decorator.remove',
+                    decorator: decorator.name,
+                  })
+                })
+              editor.send({
+                type: 'decorator.toggle',
+                decorator: decorator.name,
+              })
+              editor.send({ type: 'focus' })
+            }}
+          />
+        ))}
+      </ButtonGroup>
+      <ButtonGroup>
+        {schemaDefinition.lists.map((list) => (
+          <ToolbarButton
+            key={list.name}
+            definition={list}
+            onClick={() => {
+              editor.send({
+                type: 'list item.toggle',
+                listItem: list.name,
+              })
+              editor.send({ type: 'focus' })
+            }}
+          />
+        ))}
+      </ButtonGroup>
+      {schemaDefinition.annotations
+        .filter((annotation) => annotation.name === 'link')
+        .map((annotation) => (
+          <LinkButton key={annotation.name} annotation={annotation} />
+        ))}
+    </Toolbar>
   )
 }
-
-const StyleDropdown = () => {
-  const editor = useEditor()
-  const activeStyle = useEditorSelector(editor, selectors.getActiveStyle)
-
-  return (
-    <Select
-      onValueChange={(value) => {
-        editor.send({
-          type: 'style.toggle',
-          style: value,
-        })
-        editor.send({ type: 'focus' })
-      }}
-      value={activeStyle}
-    >
-      <SelectTrigger size="xs" className="text-xs bg-background">
-        <SelectValue placeholder="Select a style" />
-      </SelectTrigger>
-      <SelectContent>
-        {schemaDefinition.styles.map((style) => {
-          return (
-            <SelectItem
-              key={style.name}
-              value={style.name}
-              className="text-xs p-1"
-            >
-              <style.icon className="size-3.5" />
-              <span>{style.label}</span>
-            </SelectItem>
-          )
-        })}
-      </SelectContent>
-    </Select>
-  )
-}
-
-const ToolbarButton = ({
-  definition,
-  showTooltip = true,
-  onClick,
-  disabled,
-  variant = 'outline',
-  ref,
-}: {
-  definition: {
-    name: string
-    icon: ElementType | FC<SVGProps<SVGSVGElement>>
-    label: string
-  }
-  showTooltip?: boolean
-  onClick?: MouseEventHandler<HTMLButtonElement>
-  disabled?: boolean
-  variant?: VariantProps<typeof buttonVariants>['variant']
-  ref?: React.Ref<HTMLButtonElement>
-}) => {
-  const { name, icon, label } = definition
-  const Icon = icon
-  const editor = useEditor()
-
-  const activeDecorator = useEditorSelector(
-    editor,
-    selectors.isActiveDecorator(name)
-  )
-  const activeList = useEditorSelector(editor, selectors.isActiveListItem(name))
-  const activeAnnotation = useEditorSelector(
-    editor,
-    selectors.isActiveAnnotation(name)
-  )
-
-  const active = activeDecorator || activeList || activeAnnotation
-
-  const button = (
-    <Button
-      value={name}
-      variant={active ? 'default' : (variant ?? 'outline')}
-      onClick={onClick}
-      disabled={disabled}
-      className="size-6"
-      aria-label={showTooltip ? label : undefined}
-      ref={ref}
-    >
-      <Icon className="size-3.5" />
-    </Button>
-  )
-
-  if (showTooltip) {
-    return (
-      <Tooltip>
-        <TooltipTrigger asChild>{button}</TooltipTrigger>
-        <TooltipContent>{label}</TooltipContent>
-      </Tooltip>
-    )
-  }
-
-  return button
-}
-
-// const UndoButton = ({
-//   showTooltip = true,
-//   ...props
-// }: {
-//   showTooltip?: boolean
-// } & ComponentProps<typeof Button>) => {
-//   const editor = useEditor()
-
-//   return (
-//     <ToolbarButton
-//       showTooltip={showTooltip}
-//       definition={{
-//         name: 'undo',
-//         icon: UndoIcon,
-//         label: 'Undo',
-//       }}
-//       onClick={() => {
-//         editor.send({ type: 'history.undo' })
-//         editor.send({ type: 'focus' })
-//       }}
-//       {...props}
-//     />
-//   )
-// }
-
-// const RedoButton = ({
-//   showTooltip = true,
-//   ...props
-// }: {
-//   showTooltip?: boolean
-// } & ComponentProps<typeof Button>) => {
-//   const editor = useEditor()
-
-//   return (
-//     <ToolbarButton
-//       showTooltip={showTooltip}
-//       definition={{
-//         name: 'redo',
-//         icon: RedoIcon,
-//         label: 'Redo',
-//       }}
-//       onClick={() => {
-//         editor.send({ type: 'history.redo' })
-//         editor.send({ type: 'focus' })
-//       }}
-//       {...props}
-//     />
-//   )
-// }
 
 export default PortableTextEditor
