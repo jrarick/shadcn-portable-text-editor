@@ -49,10 +49,12 @@ export const StyleDropdown = ({
   styles,
   showKeyboardShortcut = true,
   width = 'auto',
+  size = 'default',
 }: {
   styles: ReadonlyArray<ExtendedBaseDefinition>
   showKeyboardShortcut?: boolean
   width?: CSSProperties['width']
+  size?: 'xs' | 'sm' | 'default'
 }) => {
   const editor = useEditor()
   const activeStyle =
@@ -69,17 +71,30 @@ export const StyleDropdown = ({
       }}
       value={activeStyle}
     >
-      <SelectTrigger className="bg-background" style={{ width }}>
+      <SelectTrigger
+        className={cn('bg-background', {
+          'data-[size=default]:h-6 data-[size=sm]:h-6 text-xs': size === 'xs',
+        })}
+        style={{ width }}
+      >
         <SelectValue placeholder="Select a style" />
       </SelectTrigger>
       <SelectContent>
         {styles.map((style) => {
           return (
-            <SelectItem key={style.name} value={style.name}>
+            <SelectItem
+              key={style.name}
+              value={style.name}
+              className={cn(size === 'xs' && 'py-1')}
+            >
               <div className="flex flex-row items-center gap-4">
                 <div className="flex items-center gap-2">
-                  {style.icon && <style.icon />}
-                  <span>{style.title}</span>
+                  {style.icon && (
+                    <style.icon className={cn(size === 'xs' && 'size-3.5')} />
+                  )}
+                  <span className={cn(size === 'xs' && 'text-xs')}>
+                    {style.title}
+                  </span>
                 </div>
                 {showKeyboardShortcut && style.shortcut && (
                   <KeyboardShortcutPreview shortcut={style.shortcut} />
@@ -213,9 +228,12 @@ export const KeyboardShortcutPreview = ({
 
 export const LinkButton = ({
   annotation,
+  ref,
+  ...props
 }: {
   annotation: ExtendedBaseDefinition
-}) => {
+  ref?: React.Ref<HTMLButtonElement>
+} & React.ComponentPropsWithoutRef<typeof Button>) => {
   const editor = useEditor()
   const [inputValue, setInputValue] = useState('')
 
@@ -225,11 +243,13 @@ export const LinkButton = ({
         <ToolbarButton
           key={annotation.name}
           definition={annotation}
+          ref={ref}
           onClick={() => {
             editor.send({
               type: 'focus',
             })
           }}
+          {...props}
         />
       </PopoverTrigger>
       <PopoverContent className="max-w-min">
