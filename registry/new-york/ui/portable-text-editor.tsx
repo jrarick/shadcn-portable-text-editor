@@ -1,46 +1,46 @@
+import { cn } from "@/lib/utils"
+import { Input } from "@/registry/new-york/ui/input"
 import {
-  BaseDefinition,
-  useEditor,
-  useEditorSelector,
-} from '@portabletext/editor'
-import * as selectors from '@portabletext/editor/selectors'
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/registry/new-york/ui/popover"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/registry/new-york/ui/select'
-import { cn } from '@/lib/utils'
-import { Button } from './button'
+} from "@/registry/new-york/ui/select"
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/registry/new-york/ui/tooltip'
-import { CSSProperties, useState } from 'react'
+} from "@/registry/new-york/ui/tooltip"
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/registry/new-york/ui/popover'
-import { Input } from '@/registry/new-york/ui/input'
+  BaseDefinition,
+  useEditor,
+  useEditorSelector,
+} from "@portabletext/editor"
+import * as selectors from "@portabletext/editor/selectors"
+import { KeyboardShortcut, redo, undo } from "@portabletext/keyboard-shortcuts"
 import {
   ArrowBigUpIcon,
   ChevronUpIcon,
   OptionIcon,
   RedoIcon,
   UndoIcon,
-} from 'lucide-react'
-import { KeyboardShortcut, undo, redo } from '@portabletext/keyboard-shortcuts'
+} from "lucide-react"
+import { CSSProperties, useState } from "react"
+import { Button } from "./button"
 
 export interface ExtendedBaseDefinition extends BaseDefinition {
   icon?: React.ElementType
   shortcut?: KeyboardShortcut<
     Pick<
       KeyboardEvent,
-      'code' | 'key' | 'altKey' | 'ctrlKey' | 'metaKey' | 'shiftKey'
+      "code" | "key" | "altKey" | "ctrlKey" | "metaKey" | "shiftKey"
     >
   >
 }
@@ -48,13 +48,13 @@ export interface ExtendedBaseDefinition extends BaseDefinition {
 export const StyleDropdown = ({
   styles,
   showKeyboardShortcut = true,
-  width = 'auto',
-  size = 'default',
+  width = "auto",
+  size = "default",
 }: {
   styles: ReadonlyArray<ExtendedBaseDefinition>
   showKeyboardShortcut?: boolean
-  width?: CSSProperties['width']
-  size?: 'xs' | 'sm' | 'default'
+  width?: CSSProperties["width"]
+  size?: "xs" | "sm" | "default"
 }) => {
   const editor = useEditor()
   const activeStyle =
@@ -64,16 +64,16 @@ export const StyleDropdown = ({
     <Select
       onValueChange={(value) => {
         editor.send({
-          type: 'style.toggle',
+          type: "style.toggle",
           style: value,
         })
-        editor.send({ type: 'focus' })
+        editor.send({ type: "focus" })
       }}
       value={activeStyle}
     >
       <SelectTrigger
-        className={cn('bg-background', {
-          'data-[size=default]:h-6 data-[size=sm]:h-6 text-xs': size === 'xs',
+        className={cn("bg-background", {
+          "text-xs data-[size=default]:h-6 data-[size=sm]:h-6": size === "xs",
         })}
         style={{ width }}
       >
@@ -85,14 +85,14 @@ export const StyleDropdown = ({
             <SelectItem
               key={style.name}
               value={style.name}
-              className={cn(size === 'xs' && 'py-1')}
+              className={cn(size === "xs" && "py-1")}
             >
               <div className="flex flex-row items-center gap-4">
                 <div className="flex items-center gap-2">
                   {style.icon && (
-                    <style.icon className={cn(size === 'xs' && 'size-3.5')} />
+                    <style.icon className={cn(size === "xs" && "size-3.5")} />
                   )}
-                  <span className={cn(size === 'xs' && 'text-xs')}>
+                  <span className={cn(size === "xs" && "text-xs")}>
                     {style.title}
                   </span>
                 </div>
@@ -111,15 +111,15 @@ export const StyleDropdown = ({
 export const ButtonGroup = ({
   className,
   ...props
-}: React.ComponentProps<'div'>) => {
+}: React.ComponentProps<"div">) => {
   return (
     <div
       className={cn(
-        'flex flex-row rounded-md -space-x-px',
-        '[&_button]:shadow-none shadow-xs',
-        'isolate [&_button]:focus:z-10',
-        '[&_button]:rounded-none [&_button]:first:rounded-l-md [&_button]:last:rounded-r-md',
-        '[&_button]:border',
+        "flex flex-row -space-x-px rounded-md",
+        "shadow-xs [&_button]:shadow-none",
+        "isolate [&_button]:focus:z-10",
+        "[&_button]:rounded-none [&_button]:first:rounded-l-md [&_button]:last:rounded-r-md",
+        "[&_button]:border",
         className
       )}
       {...props}
@@ -158,8 +158,8 @@ export const ToolbarButton = ({
   const button = (
     <Button
       value={name}
-      variant={active ? 'default' : (props.variant ?? 'outline')}
-      size={props.size ?? 'icon'}
+      variant={active ? "default" : (props.variant ?? "outline")}
+      size={props.size ?? "icon"}
       aria-label={showTooltip ? title : undefined}
       ref={ref}
       {...props}
@@ -202,18 +202,18 @@ export const KeyboardShortcutPreview = ({
     const Icon = keyToIcon[keyboardKey.toLowerCase() as keyof typeof keyToIcon]
 
     return (
-      <kbd className="rounded-xs bg-muted text-muted-foreground h-4 min-w-4 flex items-center justify-center text-xs">
+      <kbd className="flex h-4 min-w-4 items-center justify-center rounded-xs bg-muted text-xs text-muted-foreground">
         {Icon ? <Icon className="size-3" /> : keyboardKey}
       </kbd>
     )
   }
 
   return (
-    <div className="space-x-1 flex items-center z-10">
+    <div className="z-10 flex items-center space-x-1">
       {shortcut.keys.map((keyboardKey) => (
         <kbd
           key={keyboardKey}
-          className="rounded-xs bg-muted text-muted-foreground h-4 min-w-4 flex items-center justify-center text-xs"
+          className="flex h-4 min-w-4 items-center justify-center rounded-xs bg-muted text-xs text-muted-foreground"
         >
           {keyboardKey.toLowerCase() in keyToIcon ? (
             <KeyboardKey keyboardKey={keyboardKey} />
@@ -235,7 +235,7 @@ export const LinkButton = ({
   ref?: React.Ref<HTMLButtonElement>
 } & React.ComponentPropsWithoutRef<typeof Button>) => {
   const editor = useEditor()
-  const [inputValue, setInputValue] = useState('')
+  const [inputValue, setInputValue] = useState("")
 
   return (
     <Popover key={annotation.name}>
@@ -246,14 +246,14 @@ export const LinkButton = ({
           ref={ref}
           onClick={() => {
             editor.send({
-              type: 'focus',
+              type: "focus",
             })
           }}
           {...props}
         />
       </PopoverTrigger>
       <PopoverContent className="max-w-min">
-        <p className="text-xs text-muted-foreground mb-2 font-semibold">
+        <p className="mb-2 text-xs font-semibold text-muted-foreground">
           Enter a URL
         </p>
         <form
@@ -261,7 +261,7 @@ export const LinkButton = ({
             e.preventDefault()
 
             editor.send({
-              type: 'annotation.add',
+              type: "annotation.add",
               annotation: {
                 name: annotation.name,
                 value: {
@@ -270,7 +270,7 @@ export const LinkButton = ({
               },
             })
 
-            editor.send({ type: 'focus' })
+            editor.send({ type: "focus" })
           }}
         >
           <Input
@@ -295,14 +295,14 @@ export const UndoButton = (props: React.ComponentProps<typeof Button>) => {
   return (
     <ToolbarButton
       definition={{
-        name: 'undo',
+        name: "undo",
         icon: UndoIcon,
-        title: 'Undo',
+        title: "Undo",
         shortcut: undo,
       }}
       onClick={() => {
-        editor.send({ type: 'history.undo' })
-        editor.send({ type: 'focus' })
+        editor.send({ type: "history.undo" })
+        editor.send({ type: "focus" })
       }}
       {...props}
     />
@@ -315,14 +315,14 @@ export const RedoButton = (props: React.ComponentProps<typeof Button>) => {
   return (
     <ToolbarButton
       definition={{
-        name: 'redo',
+        name: "redo",
         icon: RedoIcon,
-        title: 'Redo',
+        title: "Redo",
         shortcut: redo,
       }}
       onClick={() => {
-        editor.send({ type: 'history.redo' })
-        editor.send({ type: 'focus' })
+        editor.send({ type: "history.redo" })
+        editor.send({ type: "focus" })
       }}
       {...props}
     />
@@ -332,7 +332,7 @@ export const RedoButton = (props: React.ComponentProps<typeof Button>) => {
 export const Toolbar = ({ children }: { children?: React.ReactNode }) => {
   return (
     <TooltipProvider>
-      <div className="border-b py-1.5 px-2.5 flex gap-1.5 bg-muted rounded-t-sm flex-wrap">
+      <div className="flex flex-wrap gap-1.5 rounded-t-sm border-b bg-muted px-2.5 py-1.5">
         {children}
       </div>
     </TooltipProvider>
