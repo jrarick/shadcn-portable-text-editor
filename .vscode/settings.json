@@ -1,6 +1,7 @@
 {
   "editor.codeActionsOnSave": {
     "source.organizeImports": "always",
-    "source.removeUnusedImports": "always"
-  }
+    "source.removeUnusedImports": "always",
+  },
+  "editor.formatOnSave": true
 }

@@ -74,7 +74,7 @@ const schemaDefinition = defineSchema({
   blockObjects: [],
 })
 
-const KitchenSinkEditor = () => {
+const CompactEditor = () => {
   const [value, setValue] = useState<Array<PortableTextBlock> | undefined>(
     undefined
   )
@@ -96,7 +96,7 @@ const KitchenSinkEditor = () => {
       <div className="flex flex-col rounded-md border border-border shadow">
         <PortableTextToolbar />
         <PortableTextEditable
-          className="h-96 w-full p-2 focus-visible:outline-none"
+          className="h-96 w-full p-2 text-sm focus-visible:outline-none"
           renderStyle={renderStyle}
           renderDecorator={renderDecorator}
           renderBlock={(props) => <div>{props.children}</div>}
@@ -128,8 +128,16 @@ const PortableTextToolbar = () => {
   return (
     <Toolbar>
       <ButtonGroup>
-        <HistoryButton direction="undo" showKeyboardShortcut={true} />
-        <HistoryButton direction="redo" showKeyboardShortcut={true} />
+        <HistoryButton
+          direction="undo"
+          showKeyboardShortcut={true}
+          className="size-6 [&_svg:not([class*='size-'])]:size-3.5"
+        />
+        <HistoryButton
+          direction="redo"
+          showKeyboardShortcut={true}
+          className="size-6 [&_svg:not([class*='size-'])]:size-3.5"
+        />
       </ButtonGroup>
       <ButtonGroup>
         {standardDecorators.map((decorator) => (
@@ -137,6 +145,7 @@ const PortableTextToolbar = () => {
             key={decorator.name}
             schemaType={decorator}
             showKeyboardShortcut={true}
+            className="size-6 [&_svg:not([class*='size-'])]:size-3.5"
           />
         ))}
       </ButtonGroup>
@@ -144,7 +153,8 @@ const PortableTextToolbar = () => {
         <StyleDropdown
           schemaTypes={toolbarSchema.styles}
           showKeyboardShortcut={true}
-          width="14rem"
+          width="13rem"
+          size="xs"
         />
       )}
       <ButtonGroup>
@@ -153,19 +163,28 @@ const PortableTextToolbar = () => {
             key={decorator.name}
             schemaType={decorator}
             showKeyboardShortcut={true}
+            className="size-6 [&_svg:not([class*='size-'])]:size-3.5"
           />
         ))}
       </ButtonGroup>
       <ButtonGroup>
         {toolbarSchema.lists?.map((list) => (
-          <ListButton key={list.name} schemaType={list} />
+          <ListButton
+            key={list.name}
+            schemaType={list}
+            className="size-6 [&_svg:not([class*='size-'])]:size-3.5"
+          />
         ))}
       </ButtonGroup>
       {toolbarSchema.annotations?.map((annotation) => (
-        <AnnotationButton key={annotation.name} schemaType={annotation} />
+        <AnnotationButton
+          key={annotation.name}
+          schemaType={annotation}
+          className="size-6 [&_svg:not([class*='size-'])]:size-3.5"
+        />
       ))}
     </Toolbar>
   )
 }
 
-export default KitchenSinkEditor
+export default CompactEditor
