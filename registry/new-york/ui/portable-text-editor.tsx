@@ -23,7 +23,7 @@ import {
   TooltipTrigger,
 } from "@/registry/new-york/ui/tooltip"
 import {
-  BaseDefinition,
+  RenderAnnotationFunction,
   RenderDecoratorFunction,
   RenderStyleFunction,
 } from "@portabletext/editor"
@@ -93,15 +93,14 @@ import { isValidElement } from "react"
 import { isValidElementType } from "react-is"
 import { z } from "zod"
 
-export interface ExtendedBaseDefinition extends BaseDefinition {
-  icon?: React.ElementType
-  shortcut?: KeyboardShortcut<
-    Pick<
-      KeyboardEvent,
-      "code" | "key" | "altKey" | "ctrlKey" | "metaKey" | "shiftKey"
-    >
-  >
-}
+export const LinkAnnotationSchema = z.object({
+  schemaType: z.object({
+    name: z.literal("link"),
+  }),
+  value: z.object({
+    href: z.string(),
+  }),
+})
 
 export const renderStyle: RenderStyleFunction = (props) => {
   if (props.schemaType.value === "h1") {
@@ -182,6 +181,16 @@ export const renderDecorator: RenderDecoratorFunction = (props) => {
     return <div className="text-justify">{props.children}</div>
   }
   return <>{props.children}</>
+}
+
+export const renderAnnotation: RenderAnnotationFunction = (props) => {
+  console.log("renderAnnotation", props)
+
+  if (LinkAnnotationSchema.safeParse(props).success) {
+    return <span className="text-blue-800 underline">{props.children}</span>
+  }
+
+  return props.children
 }
 
 export const extendDecorator: ExtendDecoratorSchemaType = (decorator) => {
@@ -630,7 +639,7 @@ export const AnnotationButton = ({
           defaultValues={schemaType.defaultValues}
           onSubmit={({ value }) => {
             annotationButton.send({ type: "add", annotation: { value } })
-            close()
+            annotationButton.send({ type: "close dialog" })
           }}
         />
       </DialogContent>

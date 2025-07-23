@@ -10,6 +10,7 @@ import {
   extendStyle,
   HistoryButton,
   ListButton,
+  renderAnnotation,
   renderDecorator,
   renderStyle,
   StyleDropdown,
@@ -60,10 +61,7 @@ const schemaDefinition = defineSchema({
     {
       name: "link",
       title: "Link",
-      fields: [
-        { name: "name", title: "Name", type: "string" },
-        { name: "href", title: "URL", type: "string" },
-      ],
+      fields: [{ name: "href", title: "URL", type: "string" }],
     },
   ],
   lists: [
@@ -99,6 +97,7 @@ const CompactEditor = () => {
           className="h-96 w-full p-2 text-sm focus-visible:outline-none"
           renderStyle={renderStyle}
           renderDecorator={renderDecorator}
+          renderAnnotation={renderAnnotation}
           renderBlock={(props) => <div>{props.children}</div>}
           renderListItem={(props) => <>{props.children}</>}
         />
@@ -125,18 +124,20 @@ const PortableTextToolbar = () => {
       ["left", "center", "right", "justify"].includes(decorator.name)
     ) ?? []
 
+  const smallButtonClassName = "size-6 [&_svg:not([class*='size-'])]:size-3.5"
+
   return (
     <Toolbar>
       <ButtonGroup>
         <HistoryButton
           direction="undo"
           showKeyboardShortcut={true}
-          className="size-6 [&_svg:not([class*='size-'])]:size-3.5"
+          className={smallButtonClassName}
         />
         <HistoryButton
           direction="redo"
           showKeyboardShortcut={true}
-          className="size-6 [&_svg:not([class*='size-'])]:size-3.5"
+          className={smallButtonClassName}
         />
       </ButtonGroup>
       <ButtonGroup>
@@ -145,7 +146,7 @@ const PortableTextToolbar = () => {
             key={decorator.name}
             schemaType={decorator}
             showKeyboardShortcut={true}
-            className="size-6 [&_svg:not([class*='size-'])]:size-3.5"
+            className={smallButtonClassName}
           />
         ))}
       </ButtonGroup>
@@ -163,7 +164,7 @@ const PortableTextToolbar = () => {
             key={decorator.name}
             schemaType={decorator}
             showKeyboardShortcut={true}
-            className="size-6 [&_svg:not([class*='size-'])]:size-3.5"
+            className={smallButtonClassName}
           />
         ))}
       </ButtonGroup>
@@ -172,7 +173,7 @@ const PortableTextToolbar = () => {
           <ListButton
             key={list.name}
             schemaType={list}
-            className="size-6 [&_svg:not([class*='size-'])]:size-3.5"
+            className={smallButtonClassName}
           />
         ))}
       </ButtonGroup>
@@ -180,7 +181,7 @@ const PortableTextToolbar = () => {
         <AnnotationButton
           key={annotation.name}
           schemaType={annotation}
-          className="size-6 [&_svg:not([class*='size-'])]:size-3.5"
+          className={smallButtonClassName}
         />
       ))}
     </Toolbar>

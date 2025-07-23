@@ -10,6 +10,7 @@ import {
   extendStyle,
   HistoryButton,
   ListButton,
+  renderAnnotation,
   renderDecorator,
   renderStyle,
   StyleDropdown,
@@ -74,7 +75,7 @@ const schemaDefinition = defineSchema({
   blockObjects: [],
 })
 
-const KitchenSinkEditor = () => {
+const ExtendedEditor = () => {
   const [value, setValue] = useState<Array<PortableTextBlock> | undefined>(
     undefined
   )
@@ -99,6 +100,7 @@ const KitchenSinkEditor = () => {
           className="h-96 w-full p-2 focus-visible:outline-none"
           renderStyle={renderStyle}
           renderDecorator={renderDecorator}
+          renderAnnotation={renderAnnotation}
           renderBlock={(props) => <div>{props.children}</div>}
           renderListItem={(props) => <>{props.children}</>}
         />
@@ -168,4 +170,4 @@ const PortableTextToolbar = () => {
   )
 }
 
-export default KitchenSinkEditor
+export default ExtendedEditor
