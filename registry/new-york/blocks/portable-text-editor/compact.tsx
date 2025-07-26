@@ -39,6 +39,8 @@ const schemaDefinition = defineSchema({
       name: "strikethrough",
       title: "Strikethrough",
     },
+    { name: "subscript", title: "Subscript" },
+    { name: "superscript", title: "Superscript" },
     { name: "left", title: "Align Left" },
     { name: "center", title: "Align Center" },
     { name: "right", title: "Align Right" },
@@ -115,16 +117,19 @@ const PortableTextToolbar = () => {
   })
 
   const standardDecorators =
-    toolbarSchema.decorators?.filter(
-      (decorator) =>
-        !["left", "center", "right", "justify"].includes(decorator.name)
+    toolbarSchema.decorators?.filter((decorator) =>
+      ["strong", "em", "underline", "strikethrough"].includes(decorator.name)
+    ) ?? []
+  const scriptDecorators =
+    toolbarSchema.decorators?.filter((decorator) =>
+      ["subscript", "superscript"].includes(decorator.name)
     ) ?? []
   const alignmentDecorators =
     toolbarSchema.decorators?.filter((decorator) =>
       ["left", "center", "right", "justify"].includes(decorator.name)
     ) ?? []
 
-  const smallButtonClassName = "size-6 [&_svg:not([class*='size-'])]:size-3.5"
+  const smallButtonClassName = "size-7 [&_svg:not([class*='size-'])]:size-3.5"
 
   return (
     <Toolbar>
@@ -158,6 +163,15 @@ const PortableTextToolbar = () => {
           size="xs"
         />
       )}
+      <ButtonGroup>
+        {scriptDecorators.map((decorator) => (
+          <DecoratorButton
+            key={decorator.name}
+            schemaType={decorator}
+            className={smallButtonClassName}
+          />
+        ))}
+      </ButtonGroup>
       <ButtonGroup>
         {alignmentDecorators.map((decorator) => (
           <DecoratorButton

@@ -10,6 +10,11 @@ import {
 import { Input } from "@/registry/new-york/ui/input"
 import { Label } from "@/registry/new-york/ui/label"
 import {
+  Popover,
+  PopoverAnchor,
+  PopoverContent,
+} from "@/registry/new-york/ui/popover"
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -23,6 +28,7 @@ import {
   TooltipTrigger,
 } from "@/registry/new-york/ui/tooltip"
 import {
+  BlockAnnotationRenderProps,
   RenderAnnotationFunction,
   RenderDecoratorFunction,
   RenderStyleFunction,
@@ -56,10 +62,12 @@ import {
   ToolbarListSchemaType,
   ToolbarStyleSchemaType,
   useAnnotationButton,
+  useAnnotationPopover,
   useDecoratorButton,
   useHistoryButtons,
   useListButton,
   useStyleSelector,
+  useToolbarSchema,
 } from "@portabletext/toolbar"
 import {
   AlignCenterIcon,
@@ -80,18 +88,22 @@ import {
   ListIcon,
   ListOrderedIcon,
   OptionIcon,
+  PencilIcon,
   PilcrowIcon,
   RedoIcon,
   StrikethroughIcon,
   SubscriptIcon,
   SuperscriptIcon,
   TextQuoteIcon,
+  TrashIcon,
   UnderlineIcon,
   UndoIcon,
 } from "lucide-react"
-import { isValidElement } from "react"
+import React from "react"
 import { isValidElementType } from "react-is"
 import { z } from "zod"
+
+const FormDataSchema = z.record(z.string(), z.unknown())
 
 export const LinkAnnotationSchema = z.object({
   schemaType: z.object({
@@ -168,6 +180,12 @@ export const renderDecorator: RenderDecoratorFunction = (props) => {
   if (props.value === "strikethrough") {
     return <del className="line-through">{props.children}</del>
   }
+  if (props.value === "subscript") {
+    return <sub>{props.children}</sub>
+  }
+  if (props.value === "superscript") {
+    return <sup>{props.children}</sup>
+  }
   if (props.value === "left") {
     return <div className="text-left">{props.children}</div>
   }
@@ -183,11 +201,88 @@ export const renderDecorator: RenderDecoratorFunction = (props) => {
   return <>{props.children}</>
 }
 
-export const renderAnnotation: RenderAnnotationFunction = (props) => {
-  console.log("renderAnnotation", props)
+export const RenderedLink = (props: BlockAnnotationRenderProps) => {
+  const toolbarSchema = useToolbarSchema({
+    extendAnnotation,
+  })
+  const annotationPopover = useAnnotationPopover({
+    schemaTypes: toolbarSchema.annotations ?? [],
+  })
+  const [dialogOpen, setDialogOpen] = React.useState(false)
+  const href = "href" in props.value ? String(props.value.href) : undefined
 
-  if (LinkAnnotationSchema.safeParse(props).success) {
+  if (
+    annotationPopover.snapshot.matches("disabled") ||
+    annotationPopover.snapshot.matches({ enabled: "inactive" })
+  ) {
     return <span className="text-blue-800 underline">{props.children}</span>
+  }
+
+  return (
+    <Popover open={true}>
+      <PopoverAnchor className="inline w-min">
+        <span className="text-blue-800 underline">{props.children}</span>
+      </PopoverAnchor>
+      {annotationPopover.snapshot.context.annotations
+        .filter((annotation) => annotation.value._key === props.value._key)
+        .map((annotation) => (
+          <PopoverContent
+            key={annotation.value._key}
+            className="grid grid-cols-[1fr_auto_auto] gap-2 px-3 py-2"
+          >
+            <p className="inline-flex items-center text-sm wrap-anywhere">
+              {href}
+            </p>
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+              <ToolbarTooltip tooltipContent="Edit link">
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="icon">
+                    <PencilIcon />
+                  </Button>
+                </DialogTrigger>
+              </ToolbarTooltip>
+              <DialogContent>
+                <DialogHeader className="pb-4">
+                  <DialogTitle>Edit Link</DialogTitle>
+                </DialogHeader>
+                <ObjectForm
+                  submitLabel="Save"
+                  fields={annotation.schemaType.fields}
+                  defaultValues={annotation.value}
+                  onSubmit={({ value }) => {
+                    annotationPopover.send({
+                      type: "edit",
+                      at: annotation.at,
+                      props: value,
+                    })
+                    setDialogOpen(false)
+                  }}
+                />
+              </DialogContent>
+            </Dialog>
+            <ToolbarTooltip tooltipContent="Remove link">
+              <Button
+                variant="destructive"
+                size="icon"
+                onClick={() => {
+                  annotationPopover.send({
+                    type: "remove",
+                    schemaType: annotation.schemaType,
+                  })
+                }}
+              >
+                <TrashIcon />
+              </Button>
+            </ToolbarTooltip>
+          </PopoverContent>
+        ))}
+    </Popover>
+  )
+}
+
+export const renderAnnotation: RenderAnnotationFunction = (props) => {
+  if (LinkAnnotationSchema.safeParse(props).success) {
+    return <RenderedLink {...props} />
   }
 
   return props.children
@@ -283,6 +378,7 @@ export const extendAnnotation: ExtendAnnotationSchemaType = (annotation) => {
       ...annotation,
       icon: LinkIcon,
       defaultValues: {
+        name: "",
         href: "https://example.com",
       },
       shortcut: link,
@@ -420,7 +516,7 @@ export const StyleDropdown = ({
     >
       <SelectTrigger
         className={cn("bg-background", {
-          "text-xs data-[size=default]:h-6 data-[size=sm]:h-6": size === "xs",
+          "text-xs data-[size=default]:h-7 data-[size=sm]:h-7": size === "xs",
         })}
         style={{ width }}
         size={size !== "xs" ? size : "default"}
@@ -490,7 +586,7 @@ export const ToolbarButton = ({
 
   if (showTooltip) {
     return (
-      <ToolbarButtonTooltip
+      <ToolbarTooltip
         tooltipContent={
           <div className="flex space-x-2">
             <span>{schemaType.title}</span>
@@ -501,7 +597,7 @@ export const ToolbarButton = ({
         }
       >
         {button}
-      </ToolbarButtonTooltip>
+      </ToolbarTooltip>
     )
   }
 
@@ -614,26 +710,24 @@ export const AnnotationButton = ({
         }
       }}
     >
-      <DialogTrigger asChild>
-        <ToolbarButton
-          schemaType={schemaType}
-          active={false}
-          disabled={disabled}
-          showKeyboardShortcut={true}
-          onClick={() => annotationButton.send({ type: "open dialog" })}
-          {...props}
-        >
-          <ToolbarIcon
-            icon={schemaType.icon}
-            fallback={schemaType.title ?? schemaType.name}
-          />
-        </ToolbarButton>
-      </DialogTrigger>
+      <ToolbarButton
+        schemaType={schemaType}
+        active={false}
+        disabled={disabled}
+        showKeyboardShortcut={true}
+        onClick={() => annotationButton.send({ type: "open dialog" })}
+        {...props}
+      >
+        <ToolbarIcon
+          icon={schemaType.icon}
+          fallback={schemaType.title ?? schemaType.name}
+        />
+      </ToolbarButton>
       <DialogContent>
         <DialogHeader className="pb-4">
           <DialogTitle>Create a Link</DialogTitle>
         </DialogHeader>
-        <AnnotationForm
+        <ObjectForm
           submitLabel="Add"
           fields={schemaType.fields}
           defaultValues={schemaType.defaultValues}
@@ -647,15 +741,12 @@ export const AnnotationButton = ({
   )
 }
 
-export const AnnotationForm = (
+export const ObjectForm = (
   props: Pick<ToolbarBlockObjectSchemaType, "fields" | "defaultValues"> & {
     submitLabel: string
-  } & {
     onSubmit: ({ value }: { value: { [key: string]: unknown } }) => void
   }
 ) => {
-  const FormDataSchema = z.record(z.string(), z.unknown())
-
   return (
     <form
       className="flex flex-col gap-4"
@@ -671,17 +762,27 @@ export const AnnotationForm = (
         })
       }}
     >
-      {props.fields.map((field) => (
-        <div key={field.name} className="grid w-full items-center gap-3">
-          <Label htmlFor={field.name}>{field.title ?? field.name}</Label>
-          <Input
-            type={field.type}
-            name={field.name}
-            id={field.name}
-            // defaultValue={props.defaultValues?.[field.name] ?? undefined}
-          />
-        </div>
-      ))}
+      {props.fields.map((field, index) => {
+        const defaultValue = props.defaultValues?.[field.name]
+
+        return (
+          <div key={field.name} className="grid w-full items-center gap-3">
+            <Label htmlFor={field.name}>{field.title ?? field.name}</Label>
+            <Input
+              type={field.type}
+              name={field.name}
+              id={field.name}
+              autoFocus={index === 0}
+              defaultValue={
+                typeof defaultValue === "string" ||
+                typeof defaultValue === "number"
+                  ? defaultValue
+                  : undefined
+              }
+            />
+          </div>
+        )
+      })}
       <Button className="self-end" type="submit" size="sm">
         {props.submitLabel}
       </Button>
@@ -736,7 +837,7 @@ export const HistoryButton = ({
 
   if (showTooltip) {
     return (
-      <ToolbarButtonTooltip
+      <ToolbarTooltip
         tooltipContent={
           <div className="flex space-x-2">
             <span>{extendedSchema[direction].title}</span>
@@ -749,7 +850,7 @@ export const HistoryButton = ({
         }
       >
         {button}
-      </ToolbarButtonTooltip>
+      </ToolbarTooltip>
     )
   }
 
@@ -796,7 +897,7 @@ export const KeyboardShortcutPreview = ({
   )
 }
 
-export const ToolbarButtonTooltip = ({
+export const ToolbarTooltip = ({
   children,
   tooltipContent,
 }: {
@@ -811,18 +912,21 @@ export const ToolbarButtonTooltip = ({
   )
 }
 
-export const ToolbarIcon = (props: {
+export const ToolbarIcon = ({
+  icon,
+  fallback,
+}: {
   icon?: React.ReactNode | React.ComponentType
   fallback: string | null
 }) => {
-  const IconComponent = props.icon
+  const IconComponent = icon
 
-  return isValidElement(IconComponent) ? (
+  return React.isValidElement(IconComponent) ? (
     IconComponent
   ) : isValidElementType(IconComponent) ? (
     <IconComponent />
   ) : (
-    props.fallback
+    fallback
   )
 }
 
