@@ -4,6 +4,7 @@ import {
   AnnotationButton,
   ButtonGroup,
   DecoratorButton,
+  EditorContainer,
   extendAnnotation,
   extendDecorator,
   extendList,
@@ -14,14 +15,11 @@ import {
   renderDecorator,
   renderStyle,
   StyleDropdown,
+  TextEditable,
   Toolbar,
 } from "@/registry/new-york/ui/portable-text-editor"
 import type { PortableTextBlock } from "@portabletext/editor"
-import {
-  defineSchema,
-  EditorProvider,
-  PortableTextEditable,
-} from "@portabletext/editor"
+import { defineSchema, EditorProvider } from "@portabletext/editor"
 import { EventListenerPlugin } from "@portabletext/editor/plugins"
 import { useToolbarSchema } from "@portabletext/toolbar"
 import { useState } from "react"
@@ -63,7 +61,7 @@ const schemaDefinition = defineSchema({
     {
       name: "link",
       title: "Link",
-      fields: [{ name: "href", title: "URL", type: "string" }],
+      fields: [{ name: "href", title: "HREF", type: "string" }],
     },
   ],
   lists: [
@@ -93,22 +91,21 @@ const CompactEditor = () => {
           }
         }}
       />
-      <div className="flex flex-col rounded-md border border-border shadow">
-        <PortableTextToolbar />
-        <PortableTextEditable
-          className="h-96 w-full p-2 text-sm focus-visible:outline-none"
+      <EditorContainer>
+        <EditorToolbar />
+        <TextEditable
           renderStyle={renderStyle}
           renderDecorator={renderDecorator}
           renderAnnotation={renderAnnotation}
           renderBlock={(props) => <div>{props.children}</div>}
           renderListItem={(props) => <>{props.children}</>}
         />
-      </div>
+      </EditorContainer>
     </EditorProvider>
   )
 }
 
-const PortableTextToolbar = () => {
+const EditorToolbar = () => {
   const toolbarSchema = useToolbarSchema({
     extendDecorator,
     extendStyle,

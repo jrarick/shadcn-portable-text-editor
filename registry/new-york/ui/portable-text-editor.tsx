@@ -28,10 +28,11 @@ import {
   TooltipTrigger,
 } from "@/registry/new-york/ui/tooltip"
 import {
-  BlockAnnotationRenderProps,
-  RenderAnnotationFunction,
-  RenderDecoratorFunction,
-  RenderStyleFunction,
+  type BlockAnnotationRenderProps,
+  PortableTextEditable,
+  type RenderAnnotationFunction,
+  type RenderDecoratorFunction,
+  type RenderStyleFunction,
 } from "@portabletext/editor"
 import {
   blockquote,
@@ -43,7 +44,7 @@ import {
   h5,
   h6,
   italic,
-  KeyboardShortcut,
+  type KeyboardShortcut,
   link,
   normal,
   redo,
@@ -51,7 +52,7 @@ import {
   underline,
   undo,
 } from "@portabletext/keyboard-shortcuts"
-import {
+import type {
   ExtendAnnotationSchemaType,
   ExtendDecoratorSchemaType,
   ExtendListSchemaType,
@@ -61,6 +62,8 @@ import {
   ToolbarDecoratorSchemaType,
   ToolbarListSchemaType,
   ToolbarStyleSchemaType,
+} from "@portabletext/toolbar"
+import {
   useAnnotationButton,
   useAnnotationPopover,
   useDecoratorButton,
@@ -199,85 +202,6 @@ export const renderDecorator: RenderDecoratorFunction = (props) => {
     return <div className="text-justify">{props.children}</div>
   }
   return <>{props.children}</>
-}
-
-export const RenderedLink = (props: BlockAnnotationRenderProps) => {
-  const toolbarSchema = useToolbarSchema({
-    extendAnnotation,
-  })
-  const annotationPopover = useAnnotationPopover({
-    schemaTypes: toolbarSchema.annotations ?? [],
-  })
-  const [dialogOpen, setDialogOpen] = React.useState(false)
-  const href = "href" in props.value ? String(props.value.href) : undefined
-
-  if (
-    annotationPopover.snapshot.matches("disabled") ||
-    annotationPopover.snapshot.matches({ enabled: "inactive" })
-  ) {
-    return <span className="text-blue-800 underline">{props.children}</span>
-  }
-
-  return (
-    <Popover open={true}>
-      <PopoverAnchor className="inline w-min">
-        <span className="text-blue-800 underline">{props.children}</span>
-      </PopoverAnchor>
-      {annotationPopover.snapshot.context.annotations
-        .filter((annotation) => annotation.value._key === props.value._key)
-        .map((annotation) => (
-          <PopoverContent
-            key={annotation.value._key}
-            className="grid grid-cols-[1fr_auto_auto] gap-2 px-3 py-2"
-          >
-            <p className="inline-flex items-center text-sm wrap-anywhere">
-              {href}
-            </p>
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-              <ToolbarTooltip tooltipContent="Edit link">
-                <DialogTrigger asChild>
-                  <Button variant="outline" size="icon">
-                    <PencilIcon />
-                  </Button>
-                </DialogTrigger>
-              </ToolbarTooltip>
-              <DialogContent>
-                <DialogHeader className="pb-4">
-                  <DialogTitle>Edit Link</DialogTitle>
-                </DialogHeader>
-                <ObjectForm
-                  submitLabel="Save"
-                  fields={annotation.schemaType.fields}
-                  defaultValues={annotation.value}
-                  onSubmit={({ value }) => {
-                    annotationPopover.send({
-                      type: "edit",
-                      at: annotation.at,
-                      props: value,
-                    })
-                    setDialogOpen(false)
-                  }}
-                />
-              </DialogContent>
-            </Dialog>
-            <ToolbarTooltip tooltipContent="Remove link">
-              <Button
-                variant="destructive"
-                size="icon"
-                onClick={() => {
-                  annotationPopover.send({
-                    type: "remove",
-                    schemaType: annotation.schemaType,
-                  })
-                }}
-              >
-                <TrashIcon />
-              </Button>
-            </ToolbarTooltip>
-          </PopoverContent>
-        ))}
-    </Popover>
-  )
 }
 
 export const renderAnnotation: RenderAnnotationFunction = (props) => {
@@ -471,6 +395,85 @@ export const extendList: ExtendListSchemaType = (list) => {
   }
 
   return list
+}
+
+export const RenderedLink = (props: BlockAnnotationRenderProps) => {
+  const toolbarSchema = useToolbarSchema({
+    extendAnnotation,
+  })
+  const annotationPopover = useAnnotationPopover({
+    schemaTypes: toolbarSchema.annotations ?? [],
+  })
+  const [dialogOpen, setDialogOpen] = React.useState(false)
+  const href = "href" in props.value ? String(props.value.href) : undefined
+
+  if (
+    annotationPopover.snapshot.matches("disabled") ||
+    annotationPopover.snapshot.matches({ enabled: "inactive" })
+  ) {
+    return <span className="text-blue-800 underline">{props.children}</span>
+  }
+
+  return (
+    <Popover open={true}>
+      <PopoverAnchor className="inline w-min">
+        <span className="text-blue-800 underline">{props.children}</span>
+      </PopoverAnchor>
+      {annotationPopover.snapshot.context.annotations
+        .filter((annotation) => annotation.value._key === props.value._key)
+        .map((annotation) => (
+          <PopoverContent
+            key={annotation.value._key}
+            className="grid grid-cols-[1fr_auto_auto] gap-2 px-3 py-2"
+          >
+            <p className="inline-flex items-center text-sm wrap-anywhere">
+              {href}
+            </p>
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+              <ToolbarTooltip tooltipContent="Edit link">
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="icon">
+                    <PencilIcon />
+                  </Button>
+                </DialogTrigger>
+              </ToolbarTooltip>
+              <DialogContent>
+                <DialogHeader className="pb-4">
+                  <DialogTitle>Edit Link</DialogTitle>
+                </DialogHeader>
+                <ObjectForm
+                  submitLabel="Save"
+                  fields={annotation.schemaType.fields}
+                  defaultValues={annotation.value}
+                  onSubmit={({ value }) => {
+                    annotationPopover.send({
+                      type: "edit",
+                      at: annotation.at,
+                      props: value,
+                    })
+                    setDialogOpen(false)
+                  }}
+                />
+              </DialogContent>
+            </Dialog>
+            <ToolbarTooltip tooltipContent="Remove link">
+              <Button
+                variant="destructive"
+                size="icon"
+                onClick={() => {
+                  annotationPopover.send({
+                    type: "remove",
+                    schemaType: annotation.schemaType,
+                  })
+                }}
+              >
+                <TrashIcon />
+              </Button>
+            </ToolbarTooltip>
+          </PopoverContent>
+        ))}
+    </Popover>
+  )
 }
 
 export const ButtonGroup = ({
@@ -937,5 +940,39 @@ export const Toolbar = ({ children }: { children?: React.ReactNode }) => {
         {children}
       </div>
     </TooltipProvider>
+  )
+}
+
+export const TextEditable = ({
+  className,
+  ...props
+}: {
+  className?: string
+} & React.ComponentProps<typeof PortableTextEditable>) => {
+  return (
+    <PortableTextEditable
+      className={cn(
+        "h-96 w-full p-2 text-sm focus-visible:outline-none",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+export const EditorContainer = ({
+  className,
+  ...props
+}: {
+  className?: string
+} & React.ComponentProps<"div">) => {
+  return (
+    <div
+      className={cn(
+        "flex w-full max-w-3xl flex-col rounded-md border border-border shadow",
+        className
+      )}
+      {...props}
+    />
   )
 }

@@ -2,19 +2,17 @@
 
 import {
   DecoratorButton,
+  EditorContainer,
   extendDecorator,
   extendStyle,
   renderDecorator,
   renderStyle,
   StyleDropdown,
+  TextEditable,
   Toolbar,
 } from "@/registry/new-york/ui/portable-text-editor"
 import type { PortableTextBlock } from "@portabletext/editor"
-import {
-  defineSchema,
-  EditorProvider,
-  PortableTextEditable,
-} from "@portabletext/editor"
+import { defineSchema, EditorProvider } from "@portabletext/editor"
 import { EventListenerPlugin } from "@portabletext/editor/plugins"
 import { useToolbarSchema } from "@portabletext/toolbar"
 import { useState } from "react"
@@ -59,21 +57,20 @@ const SimpleEditor = () => {
           }
         }}
       />
-      <div className="flex flex-col rounded-md border border-border shadow">
-        <PortableTextToolbar />
-        <PortableTextEditable
-          className="h-96 w-full p-2 focus-visible:outline-none"
+      <EditorContainer>
+        <EditorToolbar />
+        <TextEditable
           renderStyle={renderStyle}
           renderDecorator={renderDecorator}
           renderBlock={(props) => <div>{props.children}</div>}
           renderListItem={(props) => <>{props.children}</>}
         />
-      </div>
+      </EditorContainer>
     </EditorProvider>
   )
 }
 
-const PortableTextToolbar = () => {
+const EditorToolbar = () => {
   const toolbarSchema = useToolbarSchema({
     extendDecorator,
     extendStyle,
