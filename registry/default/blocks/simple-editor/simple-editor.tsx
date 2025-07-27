@@ -10,7 +10,7 @@ import {
   StyleDropdown,
   TextEditable,
   Toolbar,
-} from "@/registry/new-york/ui/portable-text-editor"
+} from "@/registry/default/components/ui/portable-text-editor"
 import type { PortableTextBlock } from "@portabletext/editor"
 import { defineSchema, EditorProvider } from "@portabletext/editor"
 import { EventListenerPlugin } from "@portabletext/editor/plugins"

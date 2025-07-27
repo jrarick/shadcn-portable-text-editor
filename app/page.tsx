@@ -1,11 +1,5 @@
 import { OpenInV0Button } from "@/components/open-in-v0-button"
-import PokemonPage from "@/registry/new-york/blocks/complex-component/page"
-import { ExampleForm } from "@/registry/new-york/blocks/example-form/example-form"
-import { ExampleCard } from "@/registry/new-york/blocks/example-with-css/example-card"
-import { HelloWorld } from "@/registry/new-york/blocks/hello-world/hello-world"
-import CompactEditor from "@/registry/new-york/blocks/portable-text-editor/compact"
-import ExtendedEditor from "@/registry/new-york/blocks/portable-text-editor/extended"
-import SimpleEditor from "@/registry/new-york/blocks/portable-text-editor/simple"
+import ExtendedEditor from "@/registry/default/blocks/extended-editor/extended-editor"
 // This page displays items from the custom registry.
 // You are free to implement this with your own design as needed.
 
@@ -22,21 +16,21 @@ export default function Home() {
         <div className="relative flex min-h-[450px] flex-col gap-4 rounded-lg border p-4">
           <div className="flex items-center justify-between">
             <h2 className="text-sm text-muted-foreground sm:pl-3">
-              A full featured rich text editor.
+              An extended rich text editor example.
             </h2>
-            <OpenInV0Button name="portable-text-editor" className="w-fit" />
+            <OpenInV0Button name="extended-editor" className="w-fit" />
           </div>
           <div className="relative flex min-h-[400px] items-center justify-center">
             <ExtendedEditor />
           </div>
         </div>
 
-        <div className="relative flex min-h-[450px] flex-col gap-4 rounded-lg border p-4">
+        {/* <div className="relative flex min-h-[450px] flex-col gap-4 rounded-lg border p-4">
           <div className="flex items-center justify-between">
             <h2 className="text-sm text-muted-foreground sm:pl-3">
-              A simple text editor.
+              A simple rich text editor example.
             </h2>
-            <OpenInV0Button name="portable-text-editor" className="w-fit" />
+            <OpenInV0Button name="simple-editor" className="w-fit" />
           </div>
           <div className="relative flex min-h-[400px] items-center justify-center">
             <SimpleEditor />
@@ -46,62 +40,14 @@ export default function Home() {
         <div className="relative flex min-h-[450px] flex-col gap-4 rounded-lg border p-4">
           <div className="flex items-center justify-between">
             <h2 className="text-sm text-muted-foreground sm:pl-3">
-              A compact version of the text editor.
+              A compact version of the rich text editor.
             </h2>
-            <OpenInV0Button name="portable-text-editor" className="w-fit" />
+            <OpenInV0Button name="compact-editor" className="w-fit" />
           </div>
           <div className="relative flex min-h-[400px] items-center justify-center">
             <CompactEditor />
           </div>
-        </div>
-
-        <div className="relative flex min-h-[450px] flex-col gap-4 rounded-lg border p-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm text-muted-foreground sm:pl-3">
-              A simple hello world component
-            </h2>
-            <OpenInV0Button name="hello-world" className="w-fit" />
-          </div>
-          <div className="relative flex min-h-[400px] items-center justify-center">
-            <HelloWorld />
-          </div>
-        </div>
-
-        <div className="relative flex min-h-[450px] flex-col gap-4 rounded-lg border p-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm text-muted-foreground sm:pl-3">
-              A contact form with Zod validation.
-            </h2>
-            <OpenInV0Button name="example-form" className="w-fit" />
-          </div>
-          <div className="relative flex min-h-[500px] items-center justify-center">
-            <ExampleForm />
-          </div>
-        </div>
-
-        <div className="relative flex min-h-[450px] flex-col gap-4 rounded-lg border p-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm text-muted-foreground sm:pl-3">
-              A complex component showing hooks, libs and components.
-            </h2>
-            <OpenInV0Button name="complex-component" className="w-fit" />
-          </div>
-          <div className="relative flex min-h-[400px] items-center justify-center">
-            <PokemonPage />
-          </div>
-        </div>
-
-        <div className="relative flex min-h-[450px] flex-col gap-4 rounded-lg border p-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm text-muted-foreground sm:pl-3">
-              A login form with a CSS file.
-            </h2>
-            <OpenInV0Button name="example-with-css" className="w-fit" />
-          </div>
-          <div className="relative flex min-h-[400px] items-center justify-center">
-            <ExampleCard />
-          </div>
-        </div>
+        </div> */}
       </main>
     </div>
   )

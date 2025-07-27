@@ -1,32 +1,32 @@
 import { cn } from "@/lib/utils"
-import { Button } from "@/registry/new-york/ui/button"
+import { Button } from "@/registry/default/components/ui/button"
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/registry/new-york/ui/dialog"
-import { Input } from "@/registry/new-york/ui/input"
-import { Label } from "@/registry/new-york/ui/label"
+} from "@/registry/default/components/ui/dialog"
+import { Input } from "@/registry/default/components/ui/input"
+import { Label } from "@/registry/default/components/ui/label"
 import {
   Popover,
   PopoverAnchor,
   PopoverContent,
-} from "@/registry/new-york/ui/popover"
+} from "@/registry/default/components/ui/popover"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/registry/new-york/ui/select"
+} from "@/registry/default/components/ui/select"
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/registry/new-york/ui/tooltip"
+} from "@/registry/default/components/ui/tooltip"
 import {
   type BlockAnnotationRenderProps,
   PortableTextEditable,
@@ -52,18 +52,16 @@ import {
   underline,
   undo,
 } from "@portabletext/keyboard-shortcuts"
-import type {
-  ExtendAnnotationSchemaType,
-  ExtendDecoratorSchemaType,
-  ExtendListSchemaType,
-  ExtendStyleSchemaType,
-  ToolbarAnnotationSchemaType,
-  ToolbarBlockObjectSchemaType,
-  ToolbarDecoratorSchemaType,
-  ToolbarListSchemaType,
-  ToolbarStyleSchemaType,
-} from "@portabletext/toolbar"
 import {
+  type ExtendAnnotationSchemaType,
+  type ExtendDecoratorSchemaType,
+  type ExtendListSchemaType,
+  type ExtendStyleSchemaType,
+  type ToolbarAnnotationSchemaType,
+  type ToolbarBlockObjectSchemaType,
+  type ToolbarDecoratorSchemaType,
+  type ToolbarListSchemaType,
+  type ToolbarStyleSchemaType,
   useAnnotationButton,
   useAnnotationPopover,
   useDecoratorButton,
