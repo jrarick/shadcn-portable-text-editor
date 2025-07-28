@@ -1,7 +1,7 @@
 import { OpenInV0Button } from "@/components/open-in-v0-button"
-import CompactEditor from "@/registry/default/blocks/compact-editor/compact-editor"
-import ExtendedEditor from "@/registry/default/blocks/extended-editor/extended-editor"
-import SimpleEditor from "@/registry/default/blocks/simple-editor/simple-editor"
+import CompactEditor from "@/registry/default/blocks/compact-editor"
+import ExtendedEditor from "@/registry/default/blocks/extended-editor"
+import SimpleEditor from "@/registry/default/blocks/simple-editor"
 // This page displays items from the custom registry.
 // You are free to implement this with your own design as needed.
 
