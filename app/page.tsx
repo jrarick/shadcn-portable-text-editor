@@ -18,24 +18,24 @@ export default function Home() {
         <div className="relative flex min-h-[450px] flex-col gap-4 rounded-lg border p-4">
           <div className="flex items-center justify-between">
             <h2 className="text-sm text-muted-foreground sm:pl-3">
-              An extended rich text editor example.
-            </h2>
-            <OpenInV0Button name="extended-editor" className="w-fit" />
-          </div>
-          <div className="relative flex min-h-[400px] items-center justify-center">
-            <ExtendedEditor />
-          </div>
-        </div>
-
-        <div className="relative flex min-h-[450px] flex-col gap-4 rounded-lg border p-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-sm text-muted-foreground sm:pl-3">
               A simple rich text editor example.
             </h2>
             <OpenInV0Button name="simple-editor" className="w-fit" />
           </div>
           <div className="relative flex min-h-[400px] items-center justify-center">
             <SimpleEditor />
+          </div>
+        </div>
+
+        <div className="relative flex min-h-[450px] flex-col gap-4 rounded-lg border p-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm text-muted-foreground sm:pl-3">
+              An extended rich text editor example.
+            </h2>
+            <OpenInV0Button name="extended-editor" className="w-fit" />
+          </div>
+          <div className="relative flex min-h-[400px] items-center justify-center">
+            <ExtendedEditor />
           </div>
         </div>
 

@@ -29,7 +29,7 @@ import {
 } from "@/registry/default/components/ui/tooltip"
 import {
   type BlockAnnotationRenderProps,
-  EditorProviderProps,
+  type EditorProviderProps,
   PortableTextEditable,
   EditorProvider as PortableTextEditorProvider,
   type RenderAnnotationFunction,

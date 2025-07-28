@@ -8,7 +8,7 @@
       "type": "registry:component",
       "title": "Portable Text Editor",
       "description": "A portable text editor for Sanity Studio.",
-      "dependencies": ["@portabletext/editor", "@portabletext/toolbar", "@portabletext/keyboard-shortcuts", "react-is", "zod"],
+      "dependencies": ["@types/react-is", "@portabletext/editor", "@portabletext/toolbar", "@portabletext/keyboard-shortcuts", "react-is", "zod"],
       "registryDependencies": ["button", "dialog", "input", "label", "popover", "select", "tooltip"],
       "files": [
         {
@@ -179,10 +179,35 @@
       "title": "Extended Editor",
       "description": "An extended portable text editor.",
       "registryDependencies": ["https://shadcn-portable-text-editor.vercel.app/r/portable-text-editor.json"],
-      "dependencies": ["@portabletext/editor", "@portabletext/toolbar", "@portabletext/keyboard-shortcuts", "react-is", "zod"],
       "files": [
         {
           "path": "registry/default/blocks/extended-editor.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "simple-editor",
+      "type": "registry:block",
+      "title": "Simple Editor",
+      "description": "A simple portable text editor.",
+      "registryDependencies": ["https://shadcn-portable-text-editor.vercel.app/r/portable-text-editor.json"],
+      "files": [
+        {
+          "path": "registry/default/blocks/simple-editor.tsx",
+          "type": "registry:component"
+        }
+      ]
+    },
+    {
+      "name": "compact-editor",
+      "type": "registry:block",
+      "title": "Compact Editor",
+      "description": "A compact portable text editor.",
+      "registryDependencies": ["https://shadcn-portable-text-editor.vercel.app/r/portable-text-editor.json"],
+      "files": [
+        {
+          "path": "registry/default/blocks/compact-editor.tsx",
           "type": "registry:component"
         }
       ]
