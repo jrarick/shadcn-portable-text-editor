@@ -90,7 +90,7 @@ const CompactEditor = () => {
           }
         }}
       />
-      <EditorContainer>
+      <EditorContainer className="h-[28rem] max-w-3xl">
         <EditorToolbar />
         <EditorTextEditable
           className="text-sm"

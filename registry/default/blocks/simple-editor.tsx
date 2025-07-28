@@ -76,7 +76,7 @@ const EditorToolbar = () => {
   })
 
   return (
-    <Toolbar className="justify-center">
+    <Toolbar>
       {toolbarSchema.decorators?.map((decorator) => (
         <DecoratorButton
           key={decorator.name}

@@ -1026,7 +1026,7 @@ export const Toolbar = ({
     <TooltipProvider>
       <div
         className={cn(
-          "flex flex-wrap gap-1.5 rounded-t-sm border-b bg-muted px-2.5 py-1.5",
+          "flex flex-wrap gap-1.5 rounded-t-sm border-b bg-muted px-2.5 py-1.5 md:justify-center",
           className
         )}
       >
@@ -1044,7 +1044,10 @@ export const EditorTextEditable = ({
 } & React.ComponentProps<typeof PortableTextEditable>) => {
   return (
     <PortableTextEditable
-      className={cn("h-96 w-full p-2 focus-visible:outline-none", className)}
+      className={cn(
+        "h-[30rem] w-full p-2 focus-visible:outline-none",
+        className
+      )}
       {...props}
     />
   )
@@ -1059,7 +1062,7 @@ export const EditorContainer = ({
   return (
     <div
       className={cn(
-        "flex w-full max-w-3xl flex-col rounded-md border border-border shadow",
+        "flex w-full max-w-5xl flex-col rounded-md border border-border shadow",
         className
       )}
       {...props}
