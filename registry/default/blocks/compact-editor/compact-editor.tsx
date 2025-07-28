@@ -165,6 +165,7 @@ const EditorToolbar = () => {
           <DecoratorButton
             key={decorator.name}
             schemaType={decorator}
+            showKeyboardShortcut={true}
             className={smallButtonClassName}
           />
         ))}

@@ -150,7 +150,11 @@ const EditorToolbar = () => {
       )}
       <ButtonGroup>
         {scriptDecorators.map((decorator) => (
-          <DecoratorButton key={decorator.name} schemaType={decorator} />
+          <DecoratorButton
+            key={decorator.name}
+            schemaType={decorator}
+            showKeyboardShortcut={true}
+          />
         ))}
       </ButtonGroup>
       <ButtonGroup>

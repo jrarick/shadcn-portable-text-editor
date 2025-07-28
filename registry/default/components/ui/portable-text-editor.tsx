@@ -37,6 +37,7 @@ import {
 import {
   blockquote,
   bold,
+  createKeyboardShortcut,
   h1,
   h2,
   h3,
@@ -103,6 +104,90 @@ import {
 import React from "react"
 import { isValidElementType } from "react-is"
 import { z } from "zod"
+
+export const left = createKeyboardShortcut({
+  default: [
+    {
+      key: "L",
+      alt: false,
+      ctrl: true,
+      meta: false,
+      shift: false,
+    },
+  ],
+  apple: [
+    {
+      key: "L",
+      alt: false,
+      ctrl: false,
+      meta: true,
+      shift: false,
+    },
+  ],
+})
+
+export const center = createKeyboardShortcut({
+  default: [
+    {
+      key: "E",
+      alt: false,
+      ctrl: true,
+      meta: false,
+      shift: false,
+    },
+  ],
+  apple: [
+    {
+      key: "E",
+      alt: false,
+      ctrl: false,
+      meta: true,
+      shift: false,
+    },
+  ],
+})
+
+export const right = createKeyboardShortcut({
+  default: [
+    {
+      key: "R",
+      alt: false,
+      ctrl: true,
+      meta: false,
+      shift: false,
+    },
+  ],
+  apple: [
+    {
+      key: "R",
+      alt: false,
+      ctrl: false,
+      meta: true,
+      shift: false,
+    },
+  ],
+})
+
+export const justify = createKeyboardShortcut({
+  default: [
+    {
+      key: "J",
+      alt: false,
+      ctrl: true,
+      meta: false,
+      shift: false,
+    },
+  ],
+  apple: [
+    {
+      key: "J",
+      alt: false,
+      ctrl: false,
+      meta: true,
+      shift: false,
+    },
+  ],
+})
 
 const FormDataSchema = z.record(z.string(), z.unknown())
 
@@ -263,6 +348,7 @@ export const extendDecorator: ExtendDecoratorSchemaType = (decorator) => {
     return {
       ...decorator,
       icon: AlignLeftIcon,
+      shortcut: left,
       mutuallyExclusive: ["center", "right", "justify"],
     }
   }
@@ -271,6 +357,7 @@ export const extendDecorator: ExtendDecoratorSchemaType = (decorator) => {
     return {
       ...decorator,
       icon: AlignCenterIcon,
+      shortcut: center,
       mutuallyExclusive: ["left", "right", "justify"],
     }
   }
@@ -279,6 +366,7 @@ export const extendDecorator: ExtendDecoratorSchemaType = (decorator) => {
     return {
       ...decorator,
       icon: AlignRightIcon,
+      shortcut: right,
       mutuallyExclusive: ["left", "center", "justify"],
     }
   }
@@ -287,6 +375,7 @@ export const extendDecorator: ExtendDecoratorSchemaType = (decorator) => {
     return {
       ...decorator,
       icon: AlignJustifyIcon,
+      shortcut: justify,
       mutuallyExclusive: ["left", "center", "right"],
     }
   }
