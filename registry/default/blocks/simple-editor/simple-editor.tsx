@@ -3,19 +3,19 @@
 import {
   DecoratorButton,
   EditorContainer,
+  EditorProvider,
+  EditorTextEditable,
   extendDecorator,
   extendStyle,
   renderDecorator,
   renderStyle,
   StyleDropdown,
-  TextEditable,
   Toolbar,
 } from "@/registry/default/components/ui/portable-text-editor"
-import type { PortableTextBlock } from "@portabletext/editor"
-import { defineSchema, EditorProvider } from "@portabletext/editor"
+import { defineSchema, type PortableTextBlock } from "@portabletext/editor"
 import { EventListenerPlugin } from "@portabletext/editor/plugins"
 import { useToolbarSchema } from "@portabletext/toolbar"
-import { useState } from "react"
+import React from "react"
 
 const schemaDefinition = defineSchema({
   decorators: [
@@ -38,9 +38,9 @@ const schemaDefinition = defineSchema({
 })
 
 const SimpleEditor = () => {
-  const [value, setValue] = useState<Array<PortableTextBlock> | undefined>(
-    undefined
-  )
+  const [value, setValue] = React.useState<
+    Array<PortableTextBlock> | undefined
+  >(undefined)
 
   return (
     <EditorProvider
@@ -58,7 +58,7 @@ const SimpleEditor = () => {
       />
       <EditorContainer>
         <EditorToolbar />
-        <TextEditable
+        <EditorTextEditable
           renderStyle={renderStyle}
           renderDecorator={renderDecorator}
           renderBlock={(props) => <div>{props.children}</div>}
@@ -76,7 +76,7 @@ const EditorToolbar = () => {
   })
 
   return (
-    <Toolbar>
+    <Toolbar className="justify-center">
       {toolbarSchema.decorators?.map((decorator) => (
         <DecoratorButton
           key={decorator.name}

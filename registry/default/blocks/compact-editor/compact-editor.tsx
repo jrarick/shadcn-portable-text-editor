@@ -5,6 +5,8 @@ import {
   ButtonGroup,
   DecoratorButton,
   EditorContainer,
+  EditorProvider,
+  EditorTextEditable,
   extendAnnotation,
   extendDecorator,
   extendList,
@@ -15,14 +17,12 @@ import {
   renderDecorator,
   renderStyle,
   StyleDropdown,
-  TextEditable,
   Toolbar,
 } from "@/registry/default/components/ui/portable-text-editor"
-import type { PortableTextBlock } from "@portabletext/editor"
-import { defineSchema, EditorProvider } from "@portabletext/editor"
+import { defineSchema, type PortableTextBlock } from "@portabletext/editor"
 import { EventListenerPlugin } from "@portabletext/editor/plugins"
 import { useToolbarSchema } from "@portabletext/toolbar"
-import { useState } from "react"
+import React from "react"
 
 const schemaDefinition = defineSchema({
   decorators: [
@@ -72,9 +72,9 @@ const schemaDefinition = defineSchema({
 })
 
 const CompactEditor = () => {
-  const [value, setValue] = useState<Array<PortableTextBlock> | undefined>(
-    undefined
-  )
+  const [value, setValue] = React.useState<
+    Array<PortableTextBlock> | undefined
+  >(undefined)
 
   return (
     <EditorProvider
@@ -92,7 +92,8 @@ const CompactEditor = () => {
       />
       <EditorContainer>
         <EditorToolbar />
-        <TextEditable
+        <EditorTextEditable
+          className="text-sm"
           renderStyle={renderStyle}
           renderDecorator={renderDecorator}
           renderAnnotation={renderAnnotation}

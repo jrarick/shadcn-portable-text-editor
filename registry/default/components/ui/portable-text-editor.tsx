@@ -29,7 +29,9 @@ import {
 } from "@/registry/default/components/ui/tooltip"
 import {
   type BlockAnnotationRenderProps,
+  EditorProviderProps,
   PortableTextEditable,
+  EditorProvider as PortableTextEditorProvider,
   type RenderAnnotationFunction,
   type RenderDecoratorFunction,
   type RenderStyleFunction,
@@ -1013,17 +1015,28 @@ export const ToolbarIcon = ({
   )
 }
 
-export const Toolbar = ({ children }: { children?: React.ReactNode }) => {
+export const Toolbar = ({
+  className,
+  children,
+}: {
+  className?: string
+  children?: React.ReactNode
+}) => {
   return (
     <TooltipProvider>
-      <div className="flex flex-wrap gap-1.5 rounded-t-sm border-b bg-muted px-2.5 py-1.5">
+      <div
+        className={cn(
+          "flex flex-wrap gap-1.5 rounded-t-sm border-b bg-muted px-2.5 py-1.5",
+          className
+        )}
+      >
         {children}
       </div>
     </TooltipProvider>
   )
 }
 
-export const TextEditable = ({
+export const EditorTextEditable = ({
   className,
   ...props
 }: {
@@ -1031,10 +1044,7 @@ export const TextEditable = ({
 } & React.ComponentProps<typeof PortableTextEditable>) => {
   return (
     <PortableTextEditable
-      className={cn(
-        "h-96 w-full p-2 text-sm focus-visible:outline-none",
-        className
-      )}
+      className={cn("h-96 w-full p-2 focus-visible:outline-none", className)}
       {...props}
     />
   )
@@ -1055,4 +1065,8 @@ export const EditorContainer = ({
       {...props}
     />
   )
+}
+
+export const EditorProvider = (props: EditorProviderProps) => {
+  return <PortableTextEditorProvider {...props} />
 }
