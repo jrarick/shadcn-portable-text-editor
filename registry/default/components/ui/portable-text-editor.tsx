@@ -105,6 +105,17 @@ import React from "react"
 import { isValidElementType } from "react-is"
 import { z } from "zod"
 
+const FormDataSchema = z.record(z.string(), z.unknown())
+
+export const LinkAnnotationSchema = z.object({
+  schemaType: z.object({
+    name: z.literal("link"),
+  }),
+  value: z.object({
+    href: z.string(),
+  }),
+})
+
 export const left = createKeyboardShortcut({
   default: [
     {
@@ -187,17 +198,6 @@ export const justify = createKeyboardShortcut({
       shift: false,
     },
   ],
-})
-
-const FormDataSchema = z.record(z.string(), z.unknown())
-
-export const LinkAnnotationSchema = z.object({
-  schemaType: z.object({
-    name: z.literal("link"),
-  }),
-  value: z.object({
-    href: z.string(),
-  }),
 })
 
 export const renderStyle: RenderStyleFunction = (props) => {
@@ -492,7 +492,9 @@ export const RenderedLink = (props: BlockAnnotationRenderProps) => {
     schemaTypes: toolbarSchema.annotations ?? [],
   })
   const [dialogOpen, setDialogOpen] = React.useState(false)
-  const href = "href" in props.value ? String(props.value.href) : undefined
+
+  const linkData = LinkAnnotationSchema.safeParse(props)
+  const href = linkData.success ? linkData.data.value.href : undefined
 
   if (
     annotationPopover.snapshot.matches("disabled") ||
@@ -585,13 +587,13 @@ export const ButtonGroup = ({
 export const StyleDropdown = ({
   schemaTypes,
   showKeyboardShortcut = false,
-  width = "auto",
-  size = "default",
+  triggerProps,
+  itemProps,
 }: {
   schemaTypes: ReadonlyArray<ToolbarStyleSchemaType>
   showKeyboardShortcut?: boolean
-  width?: React.CSSProperties["width"]
-  size?: "xs" | "sm" | "default"
+  triggerProps?: React.ComponentProps<typeof SelectTrigger>
+  itemProps?: Omit<React.ComponentProps<typeof SelectItem>, "value">
 }) => {
   const styleSelector = useStyleSelector({ schemaTypes })
 
@@ -605,31 +607,22 @@ export const StyleDropdown = ({
       value={styleSelector.snapshot.context.activeStyle ?? undefined}
     >
       <SelectTrigger
-        className={cn("bg-background", {
-          "text-xs data-[size=default]:h-7 data-[size=sm]:h-7": size === "xs",
-        })}
-        style={{ width }}
-        size={size !== "xs" ? size : "default"}
+        {...triggerProps}
+        className={cn("bg-background", triggerProps?.className)}
       >
         <SelectValue placeholder="Select a style" />
       </SelectTrigger>
       <SelectContent>
         {schemaTypes.map((style) => {
           return (
-            <SelectItem
-              key={style.name}
-              value={style.name}
-              className={cn(size === "xs" && "py-1")}
-            >
+            <SelectItem key={style.name} value={style.name} {...itemProps}>
               <div className="flex flex-row items-center gap-4">
                 <div className="flex items-center gap-2">
                   <ToolbarIcon
                     icon={style.icon}
                     fallback={style.title ?? style.name}
                   />
-                  <span className={cn(size === "xs" && "text-xs")}>
-                    {style.title}
-                  </span>
+                  <span>{style.title}</span>
                 </div>
                 {showKeyboardShortcut && style.shortcut && (
                   <KeyboardShortcutPreview shortcut={style.shortcut} />

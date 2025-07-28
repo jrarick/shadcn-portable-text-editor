@@ -1,5 +1,7 @@
 import { OpenInV0Button } from "@/components/open-in-v0-button"
+import CompactEditor from "@/registry/default/blocks/compact-editor/compact-editor"
 import ExtendedEditor from "@/registry/default/blocks/extended-editor/extended-editor"
+import SimpleEditor from "@/registry/default/blocks/simple-editor/simple-editor"
 // This page displays items from the custom registry.
 // You are free to implement this with your own design as needed.
 
@@ -25,7 +27,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* <div className="relative flex min-h-[450px] flex-col gap-4 rounded-lg border p-4">
+        <div className="relative flex min-h-[450px] flex-col gap-4 rounded-lg border p-4">
           <div className="flex items-center justify-between">
             <h2 className="text-sm text-muted-foreground sm:pl-3">
               A simple rich text editor example.
@@ -47,7 +49,7 @@ export default function Home() {
           <div className="relative flex min-h-[400px] items-center justify-center">
             <CompactEditor />
           </div>
-        </div> */}
+        </div>
       </main>
     </div>
   )

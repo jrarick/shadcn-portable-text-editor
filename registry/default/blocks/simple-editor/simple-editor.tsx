@@ -16,7 +16,6 @@ import { defineSchema, EditorProvider } from "@portabletext/editor"
 import { EventListenerPlugin } from "@portabletext/editor/plugins"
 import { useToolbarSchema } from "@portabletext/toolbar"
 import { useState } from "react"
-import "./editor.css"
 
 const schemaDefinition = defineSchema({
   decorators: [
@@ -89,7 +88,9 @@ const EditorToolbar = () => {
         <StyleDropdown
           schemaTypes={toolbarSchema.styles}
           showKeyboardShortcut={false}
-          width="14rem"
+          triggerProps={{
+            className: "w-56",
+          }}
         />
       )}
     </Toolbar>
